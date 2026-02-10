@@ -209,7 +209,7 @@
     <div id="result-page" class="page">
         <h2>Results!</h2>
         <p id="result-text"></p>
-        <button id="gift-btn" style="display:none;" onclick="showGift()">Claim Your Gift</button>
+        <button id="gift-btn" style="display:none;"></button>
     </div>
 
     <div id="gift-page" class="page">
@@ -297,9 +297,21 @@
         if(isCorrect) score++;
         document.getElementById(`q6`).classList.remove('active');
         document.getElementById('result-page').classList.add('active');
+        
         const text = document.getElementById('result-text');
-        text.innerText = `You got ${score}/6 correct!`;
-        document.getElementById('gift-btn').style.display = 'block';
+        const giftBtn = document.getElementById('gift-btn');
+        
+        if (score >= 3) {
+            text.innerText = `You got ${score}/6 correct! You're amazing. ✨`;
+            giftBtn.style.display = 'block';
+            giftBtn.innerText = "Claim Your Gift";
+            giftBtn.onclick = showGift;
+        } else {
+            text.innerText = `You got ${score}/6. You need at least 3 correct to see your surprise! 🌸`;
+            giftBtn.style.display = 'block';
+            giftBtn.innerText = "Try Again 🔄";
+            giftBtn.onclick = () => location.reload();
+        }
     }
 
     function createFireworks() {
