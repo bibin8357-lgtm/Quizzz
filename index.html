@@ -13,32 +13,18 @@
             --right-green: #b9fbc0;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
             background-color: #fff0f3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
         }
 
-        /* Moving Line Background */
-        #lineCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            width: 100%;
-            height: 100%;
-        }
+        #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
         .container {
             background: rgba(255, 255, 255, 0.95);
@@ -54,29 +40,15 @@
             border: 2px solid #fff;
         }
 
-        h1, h2 {
-            font-family: 'Dancing Script', cursive;
-            color: var(--text-color);
-            margin: 0 0 15px 0;
-        }
+        h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
 
         .page { display: none; }
         .active { display: block; animation: fadeIn 0.5s ease; }
 
-        .instruction-list {
-            text-align: left;
-            margin: 20px 0;
-            color: #777;
-            font-size: 0.9rem;
-        }
+        .instruction-list { text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem; }
         .instruction-item { margin-bottom: 12px; }
 
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-        }
+        .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 
         button {
             width: 100%;
@@ -91,11 +63,7 @@
             font-size: 0.95rem;
         }
 
-        button:hover {
-            background: var(--pink);
-            color: white;
-            transform: translateY(-2px);
-        }
+        button:hover { background: var(--pink); color: white; transform: translateY(-2px); }
 
         .shake {
             animation: shake 0.4s ease-in-out;
@@ -114,14 +82,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .particle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999;
-        }
+        .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 999; }
     </style>
 </head>
 <body>
@@ -134,8 +95,8 @@
         <p style="font-size: 0.9rem;">Follow the instruction:</p>
         <div class="instruction-list">
             <div class="instruction-item">✨ 1. Don’t Smile.</div>
-            <div class="instruction-item">✨ 2. Correct atleast 3.</div>
-            <div class="instruction-item">✨ 3. Unlock your Passcode For your     surprise</div>
+            <div class="instruction-item">✨ 2. Correct atleast 8.</div>
+            <div class="instruction-item">✨ 3. Unlock your Passcode for your surprise</div>
         </div>
         <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
@@ -164,18 +125,18 @@
 
     <div id="q3" class="page">
         <h2>Question 3</h2>
-        <p> Which of the following outfits did I like you wearing the most?</p>
+        <p>Which outfits did I like you wearing the most?</p>
         <div class="options-grid">
             <button onclick="next(this, false)">Casual Outfits</button>
             <button onclick="next(this, false)">Traditional Outfits</button>
-            <button onclick="next(this, true)">All of these( bzc its you)</button>
+            <button onclick="next(this, true)">All of these (bzc its you)</button>
             <button onclick="next(this, false)">The Hot Outfits</button>
         </div>
     </div>
 
     <div id="q4" class="page">
         <h2>Question 4</h2>
-        <p>Which of day do you think I still remember clearly?</p>
+        <p>Which day do you think I still remember clearly?</p>
         <div class="options-grid">
             <button onclick="next(this, true)">Tvm Days</button>
             <button onclick="next(this, false)">Kadhal Cafe</button>
@@ -186,11 +147,11 @@
 
     <div id="q5" class="page">
         <h2>Question 5</h2>
-        <p>When I looked at you that day, what do you think I felt</p>
+        <p>When I looked at you that day, what did I feel?</p>
         <div class="options-grid">
             <button onclick="next(this, true)">Fully Nervous</button>
-            <button onclick="next(this, false)">clam</button>
-            <button onclick="next(this, false)">shy</button>
+            <button onclick="next(this, false)">Calm</button>
+            <button onclick="next(this, false)">Shy</button>
             <button onclick="next(this, false)">Happyy</button>
         </div>
     </div>
@@ -199,10 +160,63 @@
         <h2>Question 6</h2>
         <p>What is my favorite Food?</p>
         <div class="options-grid">
-            <button onclick="checkScore(this, false)">Alfamm</button>
-            <button onclick="checkScore(this, true)">Youhh</button>
-            <button onclick="checkScore(this, false)">Mandhi</button>
-            <button onclick="checkScore(this, false)">Mommos and orange Juice</button>
+            <button onclick="next(this, false)">Alfamm</button>
+            <button onclick="next(this, true)">Youhh</button>
+            <button onclick="next(this, false)">Mandhi</button>
+            <button onclick="next(this, false)">Momos and orange Juice</button>
+        </div>
+    </div>
+
+    <div id="q7" class="page">
+        <h2>Question 7</h2>
+        <p>Who is more annoying?</p>
+        <div class="options-grid">
+            <button onclick="next(this, false)">Me</button>
+            <button onclick="next(this, true)">Definitely You</button>
+            <button onclick="next(this, false)">Both of us</button>
+            <button onclick="next(this, false)">Neither</button>
+        </div>
+    </div>
+
+    <div id="q8" class="page">
+        <h2>Question 8</h2>
+        <p>What is my favorite thing about you?</p>
+        <div class="options-grid">
+            <button onclick="next(this, false)">Your Eyes</button>
+            <button onclick="next(this, false)">Your Smile</button>
+            <button onclick="next(this, true)">Everything!</button>
+            <button onclick="next(this, false)">Your Voice</button>
+        </div>
+    </div>
+
+    <div id="q9" class="page">
+        <h2>Question 9</h2>
+        <p>Where do I want to travel with you?</p>
+        <div class="options-grid">
+            <button onclick="next(this, false)">Paris</button>
+            <button onclick="next(this, true)">Everywhere</button>
+            <button onclick="next(this, false)">Mountains</button>
+            <button onclick="next(this, false)">Beaches</button>
+        </div>
+    </div>
+
+    <div id="q10" class="page">
+        <h2>Question 10</h2>
+        <p>Do you love me?</p>
+        <div class="options-grid">
+            <button onclick="next(this, true)">YESSS!</button>
+            <button onclick="next(this, false)">No</button>
+            <button onclick="next(this, false)">Maybe</button>
+            <button onclick="next(this, false)">I'll think about it</button>
+        </div>
+    </div>
+
+    <div id="q11" class="page">
+        <h2>Question 11</h2>
+        <p>Will you be my Valentine forever?</p>
+        <div class="options-grid">
+            <button onclick="checkScore(this, true)">YES!</button>
+            <button onclick="checkScore(this, false)">No way</button>
         </div>
     </div>
 
@@ -220,15 +234,13 @@
 </div>
 
 <script>
-    // BG Animation
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
     let lines = [];
+    let currentStep = 1;
+    let score = 0;
 
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize);
     resize();
 
@@ -255,17 +267,8 @@
     }
 
     for(let i=0; i<60; i++) lines.push(new Line());
-
-    function animate() {
-        ctx.clearRect(0,0,canvas.width, canvas.height);
-        lines.forEach(l => l.draw());
-        requestAnimationFrame(animate);
-    }
+    function animate() { ctx.clearRect(0,0,canvas.width, canvas.height); lines.forEach(l => l.draw()); requestAnimationFrame(animate); }
     animate();
-
-    // Logic
-    let currentStep = 1;
-    let score = 0;
 
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
@@ -277,41 +280,38 @@
             score++;
             btn.style.backgroundColor = "#b9fbc0";
             createFireworks();
-            setTimeout(() => {
-                document.getElementById(`q${currentStep}`).classList.remove('active');
-                currentStep++;
-                document.getElementById(`q${currentStep}`).classList.add('active');
-            }, 800);
         } else {
             btn.classList.add('shake');
-            setTimeout(() => {
-                btn.classList.remove('shake');
-                document.getElementById(`q${currentStep}`).classList.remove('active');
-                currentStep++;
-                document.getElementById(`q${currentStep}`).classList.add('active');
-            }, 500);
         }
+        setTimeout(() => {
+            document.getElementById(`q${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`q${currentStep}`).classList.add('active');
+        }, 600);
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) score++;
-        document.getElementById(`q6`).classList.remove('active');
-        document.getElementById('result-page').classList.add('active');
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; }
+        else { btn.classList.add('shake'); }
         
-        const text = document.getElementById('result-text');
-        const giftBtn = document.getElementById('gift-btn');
-        
-        if (score >= 3) {
-            text.innerText = `You got ${score}/6 correct! You're amazing. ✨`;
-            giftBtn.style.display = 'block';
-            giftBtn.innerText = "Claim Your Gift";
-            giftBtn.onclick = showGift;
-        } else {
-            text.innerText = `You got ${score}/6. You need at least 3 correct to see your surprise! 🌸`;
-            giftBtn.style.display = 'block';
-            giftBtn.innerText = "Try Again 🔄";
-            giftBtn.onclick = () => location.reload();
-        }
+        setTimeout(() => {
+            document.getElementById(`q11`).classList.remove('active');
+            document.getElementById('result-page').classList.add('active');
+            const text = document.getElementById('result-text');
+            const giftBtn = document.getElementById('gift-btn');
+            
+            if (score >= 8) {
+                text.innerText = `You got ${score}/11 correct! You're amazing. ✨`;
+                giftBtn.style.display = 'block';
+                giftBtn.innerText = "Claim Your Gift";
+                giftBtn.onclick = showGift;
+            } else {
+                text.innerText = `You got ${score}/11. You need at least 8 correct to see your surprise! 🌸`;
+                giftBtn.style.display = 'block';
+                giftBtn.innerText = "Try Again 🔄";
+                giftBtn.onclick = () => location.reload();
+            }
+        }, 600);
     }
 
     function createFireworks() {
