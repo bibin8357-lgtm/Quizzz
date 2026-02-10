@@ -57,22 +57,36 @@
             100% { background-position: 0% 50%; }
         }
 
-        h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.5rem; }
-        
-        /* CUTE STYLE FOR QUESTIONS */
-        h2 { 
-            font-family: 'Dancing Script', cursive; 
-            color: #ff4d6d; 
-            font-size: 2rem;
-            margin-bottom: 10px;
+        /* MUSIC TOGGLE STYLE */
+        .music-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 100;
+            background: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .music-toggle:hover { transform: scale(1.1); }
+        .playing { animation: pulse 1.5s infinite; background: var(--pink); }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 175, 204, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 175, 204, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 175, 204, 0); }
         }
 
-        p {
-            font-weight: 700;
-            color: var(--text-color);
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-        }
+        h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.5rem; }
+        h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2rem; margin-bottom: 10px; }
+        p { font-weight: 700; color: var(--text-color); font-size: 1.1rem; margin-bottom: 20px; }
 
         .page { display: none; }
         .active { display: block; animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
@@ -98,7 +112,6 @@
 
         .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
-        /* CUTE STYLE FOR OPTIONS */
         button {
             width: 100%;
             padding: 14px;
@@ -113,14 +126,8 @@
             font-size: 1rem;
         }
 
-        button:hover { 
-            background: var(--pink); 
-            color: white; 
-            border-color: white; 
-            transform: scale(1.03); 
-        }
+        button:hover { background: var(--pink); color: white; border-color: white; transform: scale(1.03); }
 
-        /* SHAKE WITH LIGHT RED */
         .shake { 
             animation: shake 0.4s ease-in-out; 
             background-color: var(--wrong-red) !important; 
@@ -156,7 +163,6 @@
             color: #444;
         }
 
-        /* CUTE BACK BUTTON */
         .back-icon {
             font-size: 0.9rem;
             cursor: pointer;
@@ -191,6 +197,11 @@
 <canvas id="lineCanvas"></canvas>
 
 <div class="container">
+    <div class="music-toggle" onclick="toggleMusic()" id="musicBtn">🎵</div>
+    <audio id="bgMusic" loop>
+        <source src="music.mp3.mp3" type="audio/mpeg">
+    </audio>
+
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
         <p>Follow the instruction:</p>
@@ -329,6 +340,22 @@
     let score = 0;
     let time = 0;
 
+    // MUSIC LOGIC
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    
+    function toggleMusic() {
+        if (music.paused) {
+            music.play();
+            musicBtn.classList.add('playing');
+            musicBtn.innerText = "⏸️";
+        } else {
+            music.pause();
+            musicBtn.classList.remove('playing');
+            musicBtn.innerText = "🎵";
+        }
+    }
+
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
@@ -373,7 +400,6 @@
             btn.classList.add('shake'); 
         }
         
-        // Always go to next question after animation
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
