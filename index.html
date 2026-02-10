@@ -124,19 +124,6 @@
         @keyframes slowShow { to { opacity: 1; } }
 
         .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 999; }
-        
-        /* Heart Trail style */
-        .heart-trail {
-            position: fixed;
-            font-size: 20px;
-            pointer-events: none;
-            z-index: 9999;
-            animation: fly 1s linear forwards;
-        }
-        @keyframes fly {
-            0% { transform: translate(0,0) scale(1); opacity: 1; }
-            100% { transform: translate(0, -50px) scale(1.5); opacity: 0; }
-        }
     </style>
 </head>
 <body>
@@ -223,7 +210,6 @@
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
-    // Original Background Animation
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
     const curveLines = Array.from({length: 40}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 50 + 20,
@@ -246,20 +232,6 @@
         time += 1; requestAnimationFrame(animate);
     }
     animate();
-
-    // Heart Trail Effect
-    document.addEventListener('mousemove', (e) => spawnHeart(e.clientX, e.clientY));
-    document.addEventListener('touchstart', (e) => spawnHeart(e.touches[0].clientX, e.touches[0].clientY));
-
-    function spawnHeart(x, y) {
-        if(Math.random() > 0.1) return;
-        const h = document.createElement('div');
-        h.className = 'heart-trail';
-        h.innerHTML = '💖';
-        h.style.left = x + 'px'; h.style.top = y + 'px';
-        document.body.appendChild(h);
-        setTimeout(() => h.remove(), 1000);
-    }
 
     // Letter Typing Effect
     const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
