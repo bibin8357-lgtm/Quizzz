@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Surprise for You</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #ffafcc;
+            --soft-white: #f8f9fa;
+            --text-color: #5e548e;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #ffc8dd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1, h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .question-page { display: none; }
+        .active { display: block; animation: slideIn 0.5s forwards; }
+
+        .options-grid {
+            display: grid;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px;
+            border: 2px solid var(--pink);
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-color);
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--pink);
+            color: white;
+        }
+
+        #gift-box {
+            font-size: 80px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            display: inline-block;
+        }
+
+        #gift-box:hover {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="q1" class="question-page active">
+        <h2>Question 1</h2>
+        <p>Where did we first meet?</p>
+        <div class="options-grid">
+            <button onclick="next(true)">The Coffee Shop</button>
+            <button onclick="next(false)">The Park</button>
+            <button onclick="next(false)">In School</button>
+            <button onclick="next(false)">Online</button>
+        </div>
+    </div>
+
+    <div id="q2" class="question-page">
+        <h2>Question 2</h2>
+        <p>What is my favorite color on you?</p>
+        <div class="options-grid">
+            <button onclick="next(false)">Blue</button>
+            <button onclick="next(true)">Red</button>
+            <button onclick="next(false)">Black</button>
+            <button onclick="next(false)">White</button>
+        </div>
+    </div>
+
+    <div id="q3" class="question-page">
+        <h2>Question 3</h2>
+        <p>Which month is our anniversary?</p>
+        <div class="options-grid">
+            <button onclick="next(false)">January</button>
+            <button onclick="next(false)">June</button>
+            <button onclick="next(true)">October</button>
+            <button onclick="next(false)">December</button>
+        </div>
+    </div>
+
+    <div id="q4" class="question-page">
+        <h2>Question 4</h2>
+        <p>What was our first movie together?</p>
+        <div class="options-grid">
+            <button onclick="next(true)">Titanic</button>
+            <button onclick="next(false)">The Notebook</button>
+            <button onclick="next(false)">About Time</button>
+            <button onclick="next(false)">Shrek</button>
+        </div>
+    </div>
+
+    <div id="q5" class="question-page">
+        <h2>Question 5</h2>
+        <p>Who said "I love you" first?</p>
+        <div class="options-grid">
+            <button onclick="next(true)">Me</button>
+            <button onclick="next(false)">You</button>
+            <button onclick="next(false)">Both at once</button>
+            <button onclick="next(false)">Still waiting!</button>
+        </div>
+    </div>
+
+    <div id="q6" class="question-page">
+        <h2>Question 6</h2>
+        <p>What is my favorite snack?</p>
+        <div class="options-grid">
+            <button onclick="checkScore(false)">Pizza</button>
+            <button onclick="checkScore(true)">Chocolate</button>
+            <button onclick="checkScore(false)">Ice Cream</button>
+            <button onclick="checkScore(false)">Chips</button>
+        </div>
+    </div>
+
+    <div id="result-page" class="question-page">
+        <h2>Results!</h2>
+        <p id="result-text"></p>
+        <button id="gift-btn" style="display:none;" onclick="showGift()">Claim Your Gift</button>
+    </div>
+
+    <div id="gift-page" class="question-page">
+        <h2>For You...</h2>
+        <div id="gift-box" onclick="revealMessage()">🎁</div>
+        <p id="final-message" style="margin-top:20px; font-weight: bold;"></p>
+    </div>
+</div>
+
+<script>
+    let currentStep = 1;
+    let score = 0;
+
+    function next(isCorrect) {
+        if(isCorrect) score++;
+        document.getElementById(`q${currentStep}`).classList.remove('active');
+        currentStep++;
+        document.getElementById(`q${currentStep}`).classList.add('active');
+    }
+
+    function checkScore(isCorrect) {
+        if(isCorrect) score++;
+        document.getElementById(`q6`).classList.remove('active');
+        document.getElementById('result-page').classList.add('active');
+        
+        const text = document.getElementById('result-text');
+        if(score >= 3) {
+            text.innerText = `Yay! You got ${score}/6 correct! You know me so well.`;
+            document.getElementById('gift-btn').style.display = 'inline-block';
+        } else {
+            text.innerText = `You got ${score}/6. Don't worry, I still love you! Try again?`;
+            // Add a reload button if they fail
+            const btn = document.createElement('button');
+            btn.innerText = "Try Again";
+            btn.onclick = () => location.reload();
+            document.getElementById('result-page').appendChild(btn);
+        }
+    }
+
+    function showGift() {
+        document.getElementById('result-page').classList.remove('active');
+        document.getElementById('gift-page').classList.add('active');
+    }
+
+    function revealMessage() {
+        // This is where the sentence you share later goes
+        document.getElementById('gift-box').innerHTML = "💖";
+        document.getElementById('final-message').innerText = "[YOUR CUSTOM SENTENCE WILL GO HERE]";
+    }
+</script>
+
+</body>
+</html>
