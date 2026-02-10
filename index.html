@@ -20,7 +20,6 @@
             width: 100%; height: 100%;
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
-            /* Main Rainbow Background */
             background: linear-gradient(120deg, #ffafcc, #bde0fe, #ffc8dd, #b9fbc0, #fcf6bd);
             background-size: 400% 400%;
             animation: rainbowBG 15s ease infinite;
@@ -35,39 +34,34 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
-        /* Rainbow Effect on the Quiz Box */
+        /* Fixed Rainbow Box - No extra squares */
         .container {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.9));
-            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem 2rem;
             border-radius: 30px;
             width: 90%;
             max-width: 380px;
             text-align: center;
             position: relative;
             z-index: 10;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             
-            /* Rainbow Border Effect */
-            border: 5px solid transparent;
-            border-image: linear-gradient(to bottom right, #ffafcc, #bde0fe, #b9fbc0, #fcf6bd, #e4c1f9) 1;
-            border-radius: 30px; /* Note: border-image can sometimes clip corners, so we use a pseudo-element for better look */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            /* Clean Rainbow Border */
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(255, 175, 204, 0.5),
+                        0 0 10px 5px rgba(189, 224, 254, 0.3),
+                        0 15px 35px rgba(0,0,0,0.1);
+            
+            /* Animated Rainbow Glow Effect around the edge */
+            animation: glowRotate 5s linear infinite;
         }
 
-        /* Improved Rainbow Border for rounded corners */
-        .container::before {
-            content: "";
-            position: absolute;
-            top: -5px; bottom: -5px; left: -5px; right: -5px;
-            background: linear-gradient(45deg, #ff99c8, #fcf6bd, #d0f4de, #a9def9, #e4c1f9);
-            z-index: -1;
-            border-radius: 35px;
-            animation: borderRotate 5s linear infinite;
-        }
-
-        @keyframes borderRotate {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        @keyframes glowRotate {
+            0% { border-color: #ffafcc; box-shadow: 0 0 15px #ffafcc; }
+            25% { border-color: #bde0fe; box-shadow: 0 0 15px #bde0fe; }
+            50% { border-color: #b9fbc0; box-shadow: 0 0 15px #b9fbc0; }
+            75% { border-color: #fcf6bd; box-shadow: 0 0 15px #fcf6bd; }
+            100% { border-color: #ffafcc; box-shadow: 0 0 15px #ffafcc; }
         }
 
         h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
