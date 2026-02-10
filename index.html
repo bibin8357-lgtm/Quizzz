@@ -24,52 +24,80 @@
             display: flex; justify-content: center; align-items: center;
         }
 
-        #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
+        /* Moving Background Layers */
+        #lineCanvas, #flowerCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        #lineCanvas { z-index: 1; }
+        #flowerCanvas { z-index: 2; pointer-events: none; }
 
         .container {
             background: rgba(255, 255, 255, 0.95);
-            padding: 2rem;
-            border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            width: 90%;
-            max-width: 380px;
+            padding: 2.5rem;
+            border-radius: 35px;
+            box-shadow: 0 20px 50px rgba(94, 84, 142, 0.15);
+            width: 85%;
+            max-width: 360px;
             text-align: center;
             position: relative;
             z-index: 10;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
             border: 2px solid #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
+        h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 10px 0; }
+        p { color: var(--text-color); font-size: 0.95rem; margin-bottom: 20px; }
 
-        .page { display: none; }
-        .active { display: block; animation: fadeIn 0.5s ease; }
+        .page { display: none; width: 100%; }
+        /* Next Question Transition */
+        .active { 
+            display: block; 
+            animation: slideNext 0.6s cubic-bezier(0.23, 1, 0.32, 1); 
+        }
 
-        .instruction-list { text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem; }
-        .instruction-item { margin-bottom: 12px; }
+        @keyframes slideNext {
+            0% { opacity: 0; transform: translateX(30px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
 
-        .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            align-items: center;
+        }
 
         button {
             width: 100%;
-            padding: 12px;
+            max-width: 280px;
+            padding: 14px 15px;
             border: 2px solid var(--pink);
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--text-color);
-            font-weight: bold;
-            font-size: 0.95rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        button:hover { background: var(--pink); color: white; transform: translateY(-2px); }
+        button:hover { 
+            background: var(--pink); 
+            color: white; 
+            transform: scale(1.03); 
+        }
 
-        /* Animations */
         .shake {
             animation: shake 0.4s ease-in-out;
             background-color: var(--wrong-red) !important;
             color: white !important;
+            border-color: var(--wrong-red) !important;
         }
 
         @keyframes shake {
@@ -78,38 +106,26 @@
             75% { transform: translateX(8px); }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Gift Box Animation */
+        /* Gift Box */
         #gift-box {
-            font-size: 80px;
+            font-size: 90px;
             cursor: pointer;
             display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: wobble 2s infinite;
-        }
-
-        #gift-box:hover {
-            transform: scale(1.2);
-        }
-
-        #gift-box.open {
-            animation: popOpen 0.5s forwards;
+            transition: transform 0.3s;
+            animation: wobble 2s infinite ease-in-out;
         }
 
         @keyframes wobble {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
+            0%, 100% { transform: scale(1) rotate(0); }
+            50% { transform: scale(1.1) rotate(5deg); }
         }
+
+        .open { animation: popOpen 0.5s forwards !important; }
 
         @keyframes popOpen {
             0% { transform: scale(1); }
-            50% { transform: scale(1.4); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
         }
 
         .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 999; }
@@ -118,17 +134,13 @@
 <body>
 
 <canvas id="lineCanvas"></canvas>
+<canvas id="flowerCanvas"></canvas>
 
 <div class="container">
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
-        <p style="font-size: 0.9rem;">Follow the instruction:</p>
-        <div class="instruction-list">
-            <div class="instruction-item">✨ 1. Don’t Smile.</div>
-            <div class="instruction-item">✨ 2. Correct **EVERY** answer (11/11).</div>
-            <div class="instruction-item">✨ 3. Unlock your Passcode for your surprise</div>
-        </div>
-        <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
+        <p>Correct **EVERY** answer (11/11) to unlock your surprise!</p>
+        <button onclick="startQuiz()">Are you Ready Babby! ✨</button>
     </div>
 
     <div id="q1" class="page">
@@ -146,7 +158,7 @@
         <h2>Question 2</h2>
         <p>Which of our dates will always be your favourite?</p>
         <div class="options-grid">
-            <button onclick="next(this, false)">kadhal cafe</button>
+            <button onclick="next(this, false)">Kadhal Cafe</button>
             <button onclick="next(this, true)">Tvm Cafee</button>
             <button onclick="next(this, false)">Coocon</button>
             <button onclick="next(this, false)">Ayushus</button>
@@ -257,48 +269,76 @@
     </div>
 
     <div id="gift-page" class="page">
-        <h1>Happyy Valentines Dayy babbyyy 💌</h1>
+        <h1>Happyy Valentines Dayy 💌</h1>
         <div id="gift-box" onclick="revealMessage()">🎁</div>
         <p id="final-message" style="font-weight: bold; color: var(--text-color); margin-top: 20px;"></p>
     </div>
 </div>
 
 <script>
-    const canvas = document.getElementById('lineCanvas');
-    const ctx = canvas.getContext('2d');
-    let lines = [];
-    let currentStep = 1;
-    let score = 0;
+    // Canvas Background Animations
+    const lCanvas = document.getElementById('lineCanvas');
+    const lCtx = lCanvas.getContext('2d');
+    const fCanvas = document.getElementById('flowerCanvas');
+    const fCtx = fCanvas.getContext('2d');
+    let lines = [], petals = [];
 
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-    window.addEventListener('resize', resize);
-    resize();
+    function resize() {
+        lCanvas.width = fCanvas.width = window.innerWidth;
+        lCanvas.height = fCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize); resize();
 
     class Line {
         constructor() { this.reset(); }
         reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
+            this.x = Math.random() * lCanvas.width;
+            this.y = Math.random() * lCanvas.height;
             this.len = Math.random() * 80 + 20;
-            this.speed = Math.random() * 1.5 + 0.5;
-            this.opacity = Math.random() * 0.4 + 0.1;
+            this.speed = Math.random() * 1.2 + 0.5;
+            this.opacity = Math.random() * 0.3;
         }
         draw() {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 175, 204, ${this.opacity})`;
-            ctx.lineWidth = 2;
-            ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x + this.len, this.y - this.len);
-            ctx.stroke();
-            this.x += this.speed;
-            this.y -= this.speed;
-            if (this.x > canvas.width || this.y < 0) this.reset();
+            lCtx.beginPath();
+            lCtx.strokeStyle = `rgba(255, 175, 204, ${this.opacity})`;
+            lCtx.moveTo(this.x, this.y);
+            lCtx.lineTo(this.x + this.len, this.y - this.len);
+            lCtx.stroke();
+            this.x += this.speed; this.y -= this.speed;
+            if (this.x > lCanvas.width || this.y < 0) this.reset();
         }
     }
 
-    for(let i=0; i<60; i++) lines.push(new Line());
-    function animate() { ctx.clearRect(0,0,canvas.width, canvas.height); lines.forEach(l => l.draw()); requestAnimationFrame(animate); }
+    class Petal {
+        constructor() { this.reset(); }
+        reset() {
+            this.x = Math.random() * fCanvas.width;
+            this.y = -20;
+            this.size = Math.random() * 12 + 8;
+            this.speed = Math.random() * 1 + 0.5;
+            this.emoji = ['🌸', '✨', '💕', '🌷'][Math.floor(Math.random()*4)];
+        }
+        draw() {
+            fCtx.font = `${this.size}px serif`;
+            fCtx.fillText(this.emoji, this.x, this.y);
+            this.y += this.speed;
+            this.x += Math.sin(this.y / 50);
+            if (this.y > fCanvas.height) this.reset();
+        }
+    }
+
+    for(let i=0; i<40; i++) lines.push(new Line());
+    for(let i=0; i<15; i++) petals.push(new Petal());
+
+    function animate() {
+        lCtx.clearRect(0,0,lCanvas.width, lCanvas.height);
+        fCtx.clearRect(0,0,fCanvas.width, fCanvas.height);
+        lines.forEach(l => l.draw()); petals.forEach(p => p.draw());
+        requestAnimationFrame(animate);
+    }
     animate();
+
+    let currentStep = 1; let score = 0;
 
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
@@ -306,51 +346,49 @@
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) {
-            score++;
-            btn.style.backgroundColor = "#b9fbc0";
-            createFireworks();
-        } else {
-            btn.classList.add('shake');
+        if(isCorrect) { 
+            score++; 
+            btn.style.backgroundColor = "#b9fbc0"; 
+            createFireworks(); 
+        } else { 
+            btn.classList.add('shake'); 
         }
+        
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
             document.getElementById(`q${currentStep}`).classList.add('active');
-        }, 600);
+        }, 500);
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; }
-        else { btn.classList.add('shake'); }
-        
+        if(isCorrect) score++; else btn.classList.add('shake');
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
-            const text = document.getElementById('result-text');
-            const giftBtn = document.getElementById('gift-btn');
+            const resText = document.getElementById('result-text');
+            const gBtn = document.getElementById('gift-btn');
             
-            // Logic: Must be 11/11 to get gift
-            if (score === 11) {
-                text.innerText = `Perfect Score! 11/11! You really love me. ✨`;
-                giftBtn.style.display = 'block';
-                giftBtn.innerText = "Claim Your Gift";
-                giftBtn.onclick = showGift;
+            if(score === 11) {
+                resText.innerText = "11/11! Perfect Score! ✨";
+                gBtn.style.display = "block"; gBtn.innerText = "Open Surprise 🎁";
+                gBtn.onclick = () => {
+                    document.getElementById('result-page').classList.remove('active');
+                    document.getElementById('gift-page').classList.add('active');
+                };
             } else {
-                text.innerText = `You got ${score}/11. You must get EVERY answer correct to see the surprise! 🌸`;
-                giftBtn.style.display = 'block';
-                giftBtn.innerText = "Try Again 🔄";
-                giftBtn.onclick = () => location.reload();
+                resText.innerText = `You got ${score}/11. Try again for the gift! 🌸`;
+                gBtn.style.display = "block"; gBtn.innerText = "Try Again 🔄";
+                gBtn.onclick = () => location.reload();
             }
-        }, 600);
+        }, 500);
     }
 
     function createFireworks() {
-        const colors = ['#ffafcc', '#bde0fe', '#a2d2ff'];
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 12; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
-            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            p.style.backgroundColor = ['#ffafcc', '#bde0fe', '#a2d2ff'][Math.floor(Math.random()*3)];
             p.style.left = '50%'; p.style.top = '50%';
             document.body.appendChild(p);
             const dX = (Math.random() - 0.5) * 400;
@@ -359,19 +397,13 @@
         }
     }
 
-    function showGift() {
-        document.getElementById('result-page').classList.remove('active');
-        document.getElementById('gift-page').classList.add('active');
-    }
-
     function revealMessage() {
         const box = document.getElementById('gift-box');
         box.classList.add('open');
-        
         setTimeout(() => {
             box.style.animation = "none";
             box.innerHTML = "🥹🫶🏻😙";
-            document.getElementById('final-message').innerText = "You are the best thing that ever happened to me! And The password is Archanamadhu@7736";
+            document.getElementById('final-message').innerText = "You are the best thing that ever happened to me! The password is Archanamadhu@7736";
             createFireworks();
         }, 300);
     }
