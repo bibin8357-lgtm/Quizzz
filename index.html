@@ -22,8 +22,27 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            position: relative;
         }
 
+        /* --- Floating Emojis Background --- */
+        .bg-emoji {
+            position: absolute;
+            font-size: 24px;
+            user-select: none;
+            z-index: -1;
+            animation: float 10s linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Main Container --- */
         .container {
             background: white;
             padding: 2rem;
@@ -33,6 +52,7 @@
             max-width: 400px;
             text-align: center;
             position: relative;
+            z-index: 10;
             animation: fadeIn 0.8s ease-out;
         }
 
@@ -60,11 +80,24 @@
             transition: all 0.3s;
             color: var(--text-color);
             font-weight: bold;
+            outline: none;
         }
 
         button:hover {
             background: var(--pink);
             color: white;
+        }
+
+        /* --- Shake Animation --- */
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
         }
 
         #gift-box {
@@ -91,15 +124,22 @@
 </head>
 <body>
 
+<div class="bg-emoji" style="left: 10%; animation-delay: 0s;">🩵</div>
+<div class="bg-emoji" style="left: 25%; animation-delay: 2s;">🩶</div>
+<div class="bg-emoji" style="left: 45%; animation-delay: 4s;">🖤</div>
+<div class="bg-emoji" style="left: 65%; animation-delay: 1s;">🧡</div>
+<div class="bg-emoji" style="left: 80%; animation-delay: 5s;">❤️</div>
+<div class="bg-emoji" style="left: 90%; animation-delay: 3s;">🩵</div>
+
 <div class="container">
     <div id="q1" class="question-page active">
         <h2>Question 1</h2>
         <p>Where did we first meet?</p>
         <div class="options-grid">
-            <button onclick="next(true)">The Coffee Shop</button>
-            <button onclick="next(false)">The Park</button>
-            <button onclick="next(false)">In School</button>
-            <button onclick="next(false)">Online</button>
+            <button onclick="handleBtn(this, true)">The Coffee Shop</button>
+            <button onclick="handleBtn(this, false)">The Park</button>
+            <button onclick="handleBtn(this, false)">In School</button>
+            <button onclick="handleBtn(this, false)">Online</button>
         </div>
     </div>
 
@@ -107,10 +147,10 @@
         <h2>Question 2</h2>
         <p>What is my favorite color on you?</p>
         <div class="options-grid">
-            <button onclick="next(false)">Blue</button>
-            <button onclick="next(true)">Red</button>
-            <button onclick="next(false)">Black</button>
-            <button onclick="next(false)">White</button>
+            <button onclick="handleBtn(this, false)">Blue</button>
+            <button onclick="handleBtn(this, true)">Red</button>
+            <button onclick="handleBtn(this, false)">Black</button>
+            <button onclick="handleBtn(this, false)">White</button>
         </div>
     </div>
 
@@ -118,9 +158,9 @@
         <h2>Question 3</h2>
         <p>Which month is our anniversary?</p>
         <div class="options-grid">
-            <button onclick="next(false)">January</button>
-            <button onclick="next(false)">June</button>
-            <button onclick="next(true)">October</button>
+            <button onclick="handleBtn(this, false)">January</button>
+            <button onclick="handleBtn(this, false)">June</button>
+            <button onclick="handleBtn(this, true)">October</button>
             <button onclick="next(false)">December</button>
         </div>
     </div>
@@ -129,10 +169,10 @@
         <h2>Question 4</h2>
         <p>What was our first movie together?</p>
         <div class="options-grid">
-            <button onclick="next(true)">Titanic</button>
-            <button onclick="next(false)">The Notebook</button>
-            <button onclick="next(false)">About Time</button>
-            <button onclick="next(false)">Shrek</button>
+            <button onclick="handleBtn(this, true)">Titanic</button>
+            <button onclick="handleBtn(this, false)">The Notebook</button>
+            <button onclick="handleBtn(this, false)">About Time</button>
+            <button onclick="handleBtn(this, false)">Shrek</button>
         </div>
     </div>
 
@@ -140,10 +180,10 @@
         <h2>Question 5</h2>
         <p>Who said "I love you" first?</p>
         <div class="options-grid">
-            <button onclick="next(true)">Me</button>
-            <button onclick="next(false)">You</button>
-            <button onclick="next(false)">Both at once</button>
-            <button onclick="next(false)">Still waiting!</button>
+            <button onclick="handleBtn(this, true)">Me</button>
+            <button onclick="handleBtn(this, false)">You</button>
+            <button onclick="handleBtn(this, false)">Both at once</button>
+            <button onclick="handleBtn(this, false)">Still waiting!</button>
         </div>
     </div>
 
@@ -151,10 +191,10 @@
         <h2>Question 6</h2>
         <p>What is my favorite snack?</p>
         <div class="options-grid">
-            <button onclick="checkScore(false)">Pizza</button>
-            <button onclick="checkScore(true)">Chocolate</button>
-            <button onclick="checkScore(false)">Ice Cream</button>
-            <button onclick="checkScore(false)">Chips</button>
+            <button onclick="handleLastBtn(this, false)">Pizza</button>
+            <button onclick="handleLastBtn(this, true)">Chocolate</button>
+            <button onclick="handleLastBtn(this, false)">Ice Cream</button>
+            <button onclick="handleLastBtn(this, false)">Chips</button>
         </div>
     </div>
 
@@ -175,30 +215,38 @@
     let currentStep = 1;
     let score = 0;
 
-    function next(isCorrect) {
-        if(isCorrect) score++;
-        document.getElementById(`q${currentStep}`).classList.remove('active');
-        currentStep++;
-        document.getElementById(`q${currentStep}`).classList.add('active');
+    // Function to handle shake then move to next
+    function handleBtn(btn, isCorrect) {
+        btn.classList.add('shake');
+        setTimeout(() => {
+            if(isCorrect) score++;
+            document.getElementById(`q${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`q${currentStep}`).classList.add('active');
+        }, 400); 
     }
 
-    function checkScore(isCorrect) {
-        if(isCorrect) score++;
-        document.getElementById(`q6`).classList.remove('active');
-        document.getElementById('result-page').classList.add('active');
-        
-        const text = document.getElementById('result-text');
-        if(score >= 3) {
-            text.innerText = `Yay! You got ${score}/6 correct! You know me so well.`;
-            document.getElementById('gift-btn').style.display = 'inline-block';
-        } else {
-            text.innerText = `You got ${score}/6. Don't worry, I still love you! Try again?`;
-            // Add a reload button if they fail
-            const btn = document.createElement('button');
-            btn.innerText = "Try Again";
-            btn.onclick = () => location.reload();
-            document.getElementById('result-page').appendChild(btn);
-        }
+    // Special handler for the final question
+    function handleLastBtn(btn, isCorrect) {
+        btn.classList.add('shake');
+        setTimeout(() => {
+            if(isCorrect) score++;
+            document.getElementById(`q6`).classList.remove('active');
+            document.getElementById('result-page').classList.add('active');
+            
+            const text = document.getElementById('result-text');
+            if(score >= 3) {
+                text.innerText = `Yay! You got ${score}/6 correct! You know me so well.`;
+                document.getElementById('gift-btn').style.display = 'inline-block';
+            } else {
+                text.innerText = `You got ${score}/6. Don't worry, I still love you! Try again?`;
+                const retryBtn = document.createElement('button');
+                retryBtn.innerText = "Try Again";
+                retryBtn.style.marginTop = "10px";
+                retryBtn.onclick = () => location.reload();
+                document.getElementById('result-page').appendChild(retryBtn);
+            }
+        }, 400);
     }
 
     function showGift() {
@@ -207,7 +255,6 @@
     }
 
     function revealMessage() {
-        // This is where the sentence you share later goes
         document.getElementById('gift-box').innerHTML = "💖";
         document.getElementById('final-message').innerText = "[YOUR CUSTOM SENTENCE WILL GO HERE]";
     }
