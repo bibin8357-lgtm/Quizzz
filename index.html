@@ -268,36 +268,51 @@
     const ctx = canvas.getContext('2d');
     let currentStep = 1;
     let score = 0;
-    let tick = 0;
+    let time = 0;
 
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function resize() { 
+        canvas.width = window.innerWidth; 
+        canvas.height = window.innerHeight; 
+    }
     window.addEventListener('resize', resize);
     resize();
 
-    // Curved Line Background Animation
+    // Create 50 distinct curved lines with different properties
+    const curveLines = [];
+    const colors = ['#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db'];
+
+    for(let i = 0; i < 50; i++) {
+        curveLines.push({
+            yBase: Math.random() * canvas.height,
+            amplitude: Math.random() * 60 + 20,
+            frequency: Math.random() * 0.005 + 0.002,
+            speed: Math.random() * 0.02 + 0.005,
+            offset: Math.random() * 1000,
+            color: colors[Math.floor(Math.random() * colors.length)],
+            width: Math.random() * 2 + 1,
+            opacity: Math.random() * 0.5 + 0.2
+        });
+    }
+
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Settings for 3 different colorful curved lines
-        const curves = [
-            { y: 0.3, speed: 0.01, amp: 50, wave: 0.005, color: 'rgba(255, 175, 204, 0.5)' },
-            { y: 0.5, speed: 0.012, amp: 70, wave: 0.007, color: 'rgba(189, 224, 254, 0.5)' },
-            { y: 0.7, speed: 0.008, amp: 40, wave: 0.004, color: 'rgba(162, 210, 255, 0.5)' }
-        ];
-
-        curves.forEach(c => {
+        curveLines.forEach(line => {
             ctx.beginPath();
-            ctx.strokeStyle = c.color;
-            ctx.lineWidth = 4;
-            ctx.lineCap = 'round';
-            for (let x = 0; x < canvas.width; x++) {
-                const y = (canvas.height * c.y) + Math.sin(x * c.wave + tick * c.speed) * c.amp;
-                ctx.lineTo(x, y);
+            ctx.strokeStyle = line.color;
+            ctx.globalAlpha = line.opacity;
+            ctx.lineWidth = line.width;
+            
+            for (let x = 0; x < canvas.width; x += 5) {
+                const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
+                if (x === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
             ctx.stroke();
         });
-
-        tick++;
+        
+        ctx.globalAlpha = 1.0;
+        time += 1;
         requestAnimationFrame(animate);
     }
     animate();
@@ -347,11 +362,11 @@
     }
 
     function createFireworks() {
-        const colors = ['#ffafcc', '#bde0fe', '#a2d2ff'];
+        const colorsArr = ['#ffafcc', '#bde0fe', '#a2d2ff'];
         for (let i = 0; i < 15; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
-            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            p.style.backgroundColor = colorsArr[Math.floor(Math.random() * colorsArr.length)];
             p.style.left = '50%'; p.style.top = '50%';
             document.body.appendChild(p);
             const dX = (Math.random() - 0.5) * 400;
