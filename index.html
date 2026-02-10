@@ -24,81 +24,62 @@
             display: flex; justify-content: center; align-items: center;
         }
 
-        #lineCanvas, #flowerCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        }
-        #lineCanvas { z-index: 1; }
-        #flowerCanvas { z-index: 2; pointer-events: none; }
+        #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
         .container {
             background: rgba(255, 255, 255, 0.95);
             padding: 2rem;
             border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(94, 84, 142, 0.15);
-            width: 85%;
-            max-width: 350px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 380px;
             text-align: center;
             position: relative;
             z-index: 10;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(5px);
             border: 2px solid #fff;
-            /* Fix for buttons floating out */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
         }
 
-        h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 10px 0; }
-        p { color: var(--text-color); font-size: 0.95rem; margin-bottom: 20px; }
+        h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
 
-        .page { display: none; width: 100%; }
-        .active { display: block; animation: slideIn 0.5s ease-out; }
+        .page { display: none; }
+        .active { display: block; animation: fadeIn 0.5s ease; }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .instruction-list { text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem; }
+        .instruction-item { margin-bottom: 12px; }
 
-        .options-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            align-items: center; /* Keeps buttons centered */
-        }
+        .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 
         button {
             width: 100%;
-            max-width: 280px;
-            padding: 12px 15px;
+            padding: 12px;
             border: 2px solid var(--pink);
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--text-color);
-            font-weight: 500;
-            font-size: 0.9rem;
-            outline: none;
-            -webkit-tap-highlight-color: transparent;
+            font-weight: bold;
+            font-size: 0.95rem;
         }
 
-        button:hover { background: var(--pink); color: white; transform: scale(1.02); }
+        button:hover { background: var(--pink); color: white; transform: translateY(-2px); }
 
-        .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: white !important; border-color: var(--wrong-red) !important; }
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            background-color: var(--wrong-red) !important;
+            color: white !important;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-8px); }
             75% { transform: translateX(8px); }
         }
 
-        #gift-box {
-            font-size: 80px; cursor: pointer; display: inline-block;
-            animation: wobble 2s infinite ease-in-out;
-        }
-        @keyframes wobble {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1) rotate(5deg); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 999; }
@@ -107,13 +88,17 @@
 <body>
 
 <canvas id="lineCanvas"></canvas>
-<canvas id="flowerCanvas"></canvas>
 
 <div class="container">
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
-        <p>Correct **EVERY** answer (11/11) to unlock your surprise!</p>
-        <button onclick="startQuiz()">Are you Ready Babby! ✨</button>
+        <p style="font-size: 0.9rem;">Follow the instruction:</p>
+        <div class="instruction-list">
+            <div class="instruction-item">✨ 1. Don’t Smile.</div>
+            <div class="instruction-item">✨ 2. Correct Atleast 8.</div>
+            <div class="instruction-item">✨ 3. Unlock your Passcode for your   surprise</div>
+        </div>
+        <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
 
     <div id="q1" class="page">
@@ -142,9 +127,9 @@
         <h2>Question 3</h2>
         <p>Which outfits did I like you wearing the most?</p>
         <div class="options-grid">
-            <button onclick="next(this, true)">All of these (bzc its you)</button>
-            <button onclick="next(this, false)">Traditional Outfits</button>
             <button onclick="next(this, false)">Casual Outfits</button>
+            <button onclick="next(this, false)">Traditional Outfits</button>
+            <button onclick="next(this, true)">All of these (bzc its you)</button>
             <button onclick="next(this, false)">The Hot Outfits</button>
         </div>
     </div>
@@ -175,8 +160,8 @@
         <h2>Question 6</h2>
         <p>What is my favorite Food?</p>
         <div class="options-grid">
-            <button onclick="next(this, true)">Youhh</button>
             <button onclick="next(this, false)">Alfamm</button>
+            <button onclick="next(this, true)">Youhh</button>
             <button onclick="next(this, false)">Mandhi</button>
             <button onclick="next(this, false)">Momos and orange Juice</button>
         </div>
@@ -186,8 +171,8 @@
         <h2>Question 7</h2>
         <p>Who is more annoying?</p>
         <div class="options-grid">
-            <button onclick="next(this, true)">Definitely You</button>
             <button onclick="next(this, false)">Me</button>
+            <button onclick="next(this, true)">Definitely You</button>
             <button onclick="next(this, false)">Both of us</button>
             <button onclick="next(this, false)">Neither</button>
         </div>
@@ -197,9 +182,9 @@
         <h2>Question 8</h2>
         <p>What is my favorite thing about you?</p>
         <div class="options-grid">
-            <button onclick="next(this, true)">Everything!</button>
             <button onclick="next(this, false)">Your Eyes</button>
             <button onclick="next(this, false)">Your Smile</button>
+            <button onclick="next(this, true)">Everything!</button>
             <button onclick="next(this, false)">Effortless Movement</button>
         </div>
     </div>
@@ -208,8 +193,8 @@
         <h2>Question 9</h2>
         <p>Which is my fav thing you says?</p>
         <div class="options-grid">
-            <button onclick="next(this, true)">Entha Bibinneee</button>
             <button onclick="next(this, false)">Bibinee</button>
+            <button onclick="next(this, true)">Entha Bibinneee</button>
             <button onclick="next(this, false)">Babbyyy</button>
             <button onclick="next(this, false)">Poddaaa</button>
         </div>
@@ -242,76 +227,48 @@
     </div>
 
     <div id="gift-page" class="page">
-        <h1>Happyy Valentine's Day! 💌</h1>
-        <div id="gift-box" onclick="revealMessage()">🎁</div>
-        <p id="final-message" style="font-weight: bold; color: var(--text-color); margin-top: 15px;"></p>
+        <h1>Happyy Valentines Dayy babbyyy 💌</h1>
+        <div id="gift-box" onclick="revealMessage()" style="font-size: 70px; cursor: pointer; margin: 10px 0;">🎁</div>
+        <p id="final-message" style="font-weight: bold; color: var(--text-color);"></p>
     </div>
 </div>
 
 <script>
-    // Background Animations (Lines & Flowers)
-    const lCanvas = document.getElementById('lineCanvas');
-    const lCtx = lCanvas.getContext('2d');
-    const fCanvas = document.getElementById('flowerCanvas');
-    const fCtx = fCanvas.getContext('2d');
-    let lines = [], petals = [];
+    const canvas = document.getElementById('lineCanvas');
+    const ctx = canvas.getContext('2d');
+    let lines = [];
+    let currentStep = 1;
+    let score = 0;
 
-    function resize() {
-        lCanvas.width = fCanvas.width = window.innerWidth;
-        lCanvas.height = fCanvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resize); resize();
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
 
     class Line {
         constructor() { this.reset(); }
         reset() {
-            this.x = Math.random() * lCanvas.width;
-            this.y = Math.random() * lCanvas.height;
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
             this.len = Math.random() * 80 + 20;
             this.speed = Math.random() * 1.5 + 0.5;
-            this.opacity = Math.random() * 0.3;
+            this.opacity = Math.random() * 0.4 + 0.1;
         }
         draw() {
-            lCtx.beginPath();
-            lCtx.strokeStyle = `rgba(255, 175, 204, ${this.opacity})`;
-            lCtx.moveTo(this.x, this.y);
-            lCtx.lineTo(this.x + this.len, this.y - this.len);
-            lCtx.stroke();
-            this.x += this.speed; this.y -= this.speed;
-            if (this.x > lCanvas.width || this.y < 0) this.reset();
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 175, 204, ${this.opacity})`;
+            ctx.lineWidth = 2;
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + this.len, this.y - this.len);
+            ctx.stroke();
+            this.x += this.speed;
+            this.y -= this.speed;
+            if (this.x > canvas.width || this.y < 0) this.reset();
         }
     }
 
-    class Petal {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * fCanvas.width;
-            this.y = -20;
-            this.size = Math.random() * 12 + 8;
-            this.speed = Math.random() * 1 + 0.5;
-            this.emoji = ['🌸', '✨', '💕', '🌷'][Math.floor(Math.random()*4)];
-        }
-        draw() {
-            fCtx.font = `${this.size}px serif`;
-            fCtx.fillText(this.emoji, this.x, this.y);
-            this.y += this.speed;
-            this.x += Math.sin(this.y / 50);
-            if (this.y > fCanvas.height) this.reset();
-        }
-    }
-
-    for(let i=0; i<40; i++) lines.push(new Line());
-    for(let i=0; i<20; i++) petals.push(new Petal());
-
-    function animate() {
-        lCtx.clearRect(0,0,lCanvas.width, lCanvas.height);
-        fCtx.clearRect(0,0,fCanvas.width, fCanvas.height);
-        lines.forEach(l => l.draw()); petals.forEach(p => p.draw());
-        requestAnimationFrame(animate);
-    }
+    for(let i=0; i<60; i++) lines.push(new Line());
+    function animate() { ctx.clearRect(0,0,canvas.width, canvas.height); lines.forEach(l => l.draw()); requestAnimationFrame(animate); }
     animate();
-
-    let currentStep = 1; let score = 0;
 
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
@@ -319,54 +276,66 @@
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(); }
-        else { btn.classList.add('shake'); }
-        
+        if(isCorrect) {
+            score++;
+            btn.style.backgroundColor = "#b9fbc0";
+            createFireworks();
+        } else {
+            btn.classList.add('shake');
+        }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
             document.getElementById(`q${currentStep}`).classList.add('active');
-        }, 500);
+        }, 600);
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) score++; else btn.classList.add('shake');
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; }
+        else { btn.classList.add('shake'); }
+        
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
-            const resText = document.getElementById('result-text');
-            const gBtn = document.getElementById('gift-btn');
-            if(score === 11) {
-                resText.innerText = "11/11! You are perfect! ✨";
-                gBtn.style.display = "block"; gBtn.innerText = "Open Surprise 🎁";
-                gBtn.onclick = () => {
-                    document.getElementById('result-page').classList.remove('active');
-                    document.getElementById('gift-page').classList.add('active');
-                };
+            const text = document.getElementById('result-text');
+            const giftBtn = document.getElementById('gift-btn');
+            
+            if (score >= 8) {
+                text.innerText = `You got ${score}/11 correct! You're amazing. ✨`;
+                giftBtn.style.display = 'block';
+                giftBtn.innerText = "Claim Your Gift";
+                giftBtn.onclick = showGift;
             } else {
-                resText.innerText = `You got ${score}/11. Try again for the gift! 🌸`;
-                gBtn.style.display = "block"; gBtn.innerText = "Try Again 🔄";
-                gBtn.onclick = () => location.reload();
+                text.innerText = `You got ${score}/11. You need at least 8 correct to see your surprise! 🌸`;
+                giftBtn.style.display = 'block';
+                giftBtn.innerText = "Try Again 🔄";
+                giftBtn.onclick = () => location.reload();
             }
-        }, 500);
+        }, 600);
     }
 
     function createFireworks() {
-        for (let i = 0; i < 10; i++) {
+        const colors = ['#ffafcc', '#bde0fe', '#a2d2ff'];
+        for (let i = 0; i < 15; i++) {
             const p = document.createElement('div');
             p.className = 'particle';
-            p.style.backgroundColor = '#ffafcc';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             p.style.left = '50%'; p.style.top = '50%';
             document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 300;
-            const dY = (Math.random() - 0.5) * 300;
-            p.animate([{opacity: 1}, {transform: `translate(${dX}px, ${dY}px)`, opacity: 0}], 800).onfinish = () => p.remove();
+            const dX = (Math.random() - 0.5) * 400;
+            const dY = (Math.random() - 0.5) * 400;
+            p.animate([{opacity: 1}, {transform: `translate(${dX}px, ${dY}px)`, opacity: 0}], 1000).onfinish = () => p.remove();
         }
+    }
+
+    function showGift() {
+        document.getElementById('result-page').classList.remove('active');
+        document.getElementById('gift-page').classList.add('active');
     }
 
     function revealMessage() {
         document.getElementById('gift-box').innerHTML = "🥹🫶🏻😙";
-        document.getElementById('final-message').innerText = "You are my everything! Password: Archanamadhu@7736";
+        document.getElementById('final-message').innerText = "You are the best thing that ever happened to me! And The password is Archanamadhu@7736";
         createFireworks();
     }
 </script>
