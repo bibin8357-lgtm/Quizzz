@@ -10,6 +10,7 @@
             --pink: #ffafcc;
             --text-color: #5e548e;
             --wrong-red: #ffccd5; 
+            --right-green: #b9fbc0;
         }
 
         * { box-sizing: border-box; }
@@ -40,7 +41,7 @@
             padding: 2.5rem 2rem;
             border-radius: 30px;
             width: 90%;
-            max-width: 450px;
+            max-width: 400px;
             text-align: center;
             position: relative;
             z-index: 10;
@@ -56,18 +57,32 @@
         }
 
         h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.5rem; }
-        h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2rem; }
-        p { font-weight: 700; color: var(--text-color); margin-bottom: 20px; }
+        h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2rem; margin-bottom: 10px; }
+        p { font-weight: 700; color: var(--text-color); font-size: 1.1rem; margin-bottom: 20px; }
 
         .page { display: none; }
-        .active { display: block; animation: slideIn 0.6s ease-out; }
+        .active { display: block; animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
 
         @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .valentine-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.8rem;
+            background: linear-gradient(45deg, #ff4d6d, #ffafcc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: floatText 3s ease-in-out infinite;
+        }
+
+        @keyframes floatText {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
         button {
             width: 100%;
@@ -77,33 +92,31 @@
             border-radius: 20px;
             cursor: pointer;
             transition: 0.3s;
+            color: var(--text-color);
             font-family: 'Quicksand', sans-serif;
             font-weight: 700;
+            font-size: 1rem;
         }
 
-        button:hover { background: var(--pink); color: white; transform: scale(1.03); }
+        button:hover { background: var(--pink); color: white; border-color: white; transform: scale(1.03); }
 
-        .shake { animation: shake 0.4s; background-color: var(--wrong-red) !important; }
+        .shake { 
+            animation: shake 0.4s ease-in-out; 
+            background-color: var(--wrong-red) !important; 
+            border-color: #ff8fa3 !important;
+            color: #b91c1c !important;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-8px); }
             75% { transform: translateX(8px); }
         }
 
-        .gift-container { 
-            display: flex; 
-            justify-content: space-around; 
-            align-items: center;
-            margin: 30px 0; 
-        }
-        .gift-item { 
-            font-size: 60px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            animation: wobble 2s infinite; 
-        }
+        .gift-container { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
+        .gift-item { font-size: 60px; cursor: pointer; transition: 0.3s; animation: wobble 2s infinite; }
         .gift-item:hover { transform: scale(1.2); }
-        
+
         @keyframes wobble {
             0%, 100% { transform: rotate(0deg); }
             25% { transform: rotate(5deg); }
@@ -115,10 +128,11 @@
             background: #fff;
             padding: 20px;
             border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             font-family: 'Dancing Script', cursive;
             font-size: 1.4rem;
+            line-height: 1.5;
             color: #444;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
         }
 
         .back-icon {
@@ -131,22 +145,18 @@
             border-radius: 25px;
             color: white;
             font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
             transition: 0.3s;
         }
-        .back-icon:hover { background: #ffafcc; }
+        .back-icon:hover { background: #ffafcc; transform: scale(1.1); }
 
-        .reveal-pass { opacity: 0; animation: slowShow 2s forwards; }
-        @keyframes slowShow { to { opacity: 1; } }
-
-        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; }
-        
-        /* ROMANTIC PAGE SPECIFIC */
-        .music-heart { font-size: 80px; text-align: center; display: block; margin: 10px 0; animation: pulseHeart 1.5s infinite; }
-        @keyframes pulseHeart {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .reveal-pass { opacity: 0; animation: slowShow 2s forwards; animation-delay: 0.5s; }
+        @keyframes slowShow {
+            from { opacity: 0; transform: translateY(10px); filter: blur(5px); }
+            to { opacity: 1; transform: translateY(0); filter: blur(0); }
         }
+
+        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 999; }
     </style>
 </head>
 <body>
@@ -186,27 +196,24 @@
     </div>
 
     <div id="gift-page" class="page">
-        <h1 style="font-family: 'Great Vibes'; font-size: 2.5rem;">For You, Babbyyy!</h1>
+        <h1 class="valentine-title">Happy Valentine's Day!</h1>
         <div id="gift-selection">
-            <p>Touch an icon to reveal your surprise:</p>
+            <p>You unlocked three surprises, Babbyyy!</p>
             <div class="gift-container">
-                <div class="gift-item" onclick="openPage('letter-view')">💌</div>
-                <div class="gift-item" onclick="openPage('music-view', true)">🎵</div>
-                <div class="gift-item" onclick="openPage('password-view')">🎁</div>
+                <div class="gift-item" onclick="openView('letter-view')">💌</div>
+                <div class="gift-item" onclick="openView('music-view', true)">🎵</div>
+                <div class="gift-item" onclick="openView('password-view')">🎁</div>
             </div>
         </div>
 
         <div id="music-view" class="music-view">
             <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
             <div style="text-align: center;">
-                <span class="music-heart">❤️</span>
-                <h2 style="font-family: 'Great Vibes'; font-size: 2.2rem;">Listening to this...</h2>
-                <p style="font-family: 'Dancing Script'; font-size: 1.5rem; color: #ff4d6d; line-height: 1.4;">
-                    Every note of this song reminds me of you. <br>
-                    You are the melody in my heart, Archana. <br>
-                    I could listen to this forever with you. ✨
+                <h2 style="font-size: 50px;">🎵✨❤️</h2>
+                <p style="font-family: 'Dancing Script'; font-size: 1.6rem; color: #ff4d6d;">
+                    Listening to this song, I only think of you. <br>
+                    You make my world beautiful, Archana.
                 </p>
-                <div style="font-size: 40px;">🎵✨🎶</div>
             </div>
         </div>
 
@@ -236,47 +243,20 @@
 <script>
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
-    let currentStep = 1;
-    let score = 0;
-    let time = 0;
+    let currentStep = 1; let score = 0; let time = 0;
     const music = document.getElementById('bgMusic');
-
-    function openPage(viewId, isMusic = false) {
-        document.getElementById('gift-selection').style.display = 'none';
-        document.getElementById('letter-view').style.display = 'none';
-        document.getElementById('password-view').style.display = 'none';
-        document.getElementById('music-view').style.display = 'none';
-        
-        document.getElementById(viewId).style.display = 'block';
-        
-        if(isMusic) {
-            music.play();
-            createFireworks(40);
-        }
-    }
-
-    function backToGifts() {
-        music.pause();
-        music.currentTime = 0; 
-        document.getElementById('letter-view').style.display = 'none';
-        document.getElementById('password-view').style.display = 'none';
-        document.getElementById('music-view').style.display = 'none';
-        document.getElementById('gift-selection').style.display = 'block';
-    }
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
-    const curveLines = Array.from({length: 30}, () => ({
+    const curveLines = Array.from({length: 40}, () => ({
         yBase: Math.random() * canvas.height,
         amplitude: Math.random() * 50 + 20,
         frequency: Math.random() * 0.003 + 0.001,
-        speed: Math.random() * 0.01 + 0.005,
-        offset: Math.random() * 5000,
+        speed: Math.random() * 0.01 + 0.005, offset: Math.random() * 5000,
         color: colors[Math.floor(Math.random() * colors.length)],
-        width: Math.random() * 2 + 1,
-        opacity: 0.2
+        width: Math.random() * 3 + 2, opacity: 0.2
     }));
 
     function animate() {
@@ -300,7 +280,7 @@
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(25); } 
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(35); } 
         else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
@@ -310,7 +290,7 @@
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(30); }
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
         else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
@@ -321,7 +301,7 @@
                 text.innerText = `Perfect Score! 11/11! ✨`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
             } else {
-                text.innerText = `You got ${score}/11. You must get EVERY answer correct to see the surprise! 🌸`;
+                text.innerText = `You got ${score}/11. You must get EVERY answer correct! 🌸`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
             }
         }, 600);
@@ -330,20 +310,30 @@
     function createFireworks(count = 10) {
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
-            p.className = 'particle'; 
-            p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
+            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
             p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 400, dY = (Math.random() - 0.5) * 400;
-            p.animate([
-                { opacity: 1, transform: 'translate(0,0) scale(1)' }, 
-                { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0.1)` }
-            ], 1000).onfinish = () => p.remove();
+            const dX = (Math.random() - 0.5) * 500, dY = (Math.random() - 0.5) * 500;
+            p.animate([{ opacity: 1, transform: 'translate(0,0) scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0.2)` }], 1200).onfinish = () => p.remove();
         }
     }
 
     function showGift() {
         document.getElementById('result-page').classList.remove('active');
         document.getElementById('gift-page').classList.add('active');
+    }
+
+    function openView(viewId, isMusic = false) {
+        document.getElementById('gift-selection').style.display = 'none';
+        document.getElementById(viewId).style.display = 'block';
+        if(isMusic) music.play();
+    }
+
+    function backToGifts() {
+        music.pause(); music.currentTime = 0;
+        document.getElementById('letter-view').style.display = 'none';
+        document.getElementById('password-view').style.display = 'none';
+        document.getElementById('music-view').style.display = 'none';
+        document.getElementById('gift-selection').style.display = 'block';
     }
 </script>
 </body>
