@@ -266,38 +266,40 @@
 <script>
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
-    let lines = [];
     let currentStep = 1;
     let score = 0;
+    let tick = 0;
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize);
     resize();
 
-    class Line {
-        constructor() { this.reset(); }
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.len = Math.random() * 80 + 20;
-            this.speed = Math.random() * 1.5 + 0.5;
-            this.opacity = Math.random() * 0.4 + 0.1;
-        }
-        draw() {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 175, 204, ${this.opacity})`;
-            ctx.lineWidth = 2;
-            ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x + this.len, this.y - this.len);
-            ctx.stroke();
-            this.x += this.speed;
-            this.y -= this.speed;
-            if (this.x > canvas.width || this.y < 0) this.reset();
-        }
-    }
+    // Curved Line Background Animation
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Settings for 3 different colorful curved lines
+        const curves = [
+            { y: 0.3, speed: 0.01, amp: 50, wave: 0.005, color: 'rgba(255, 175, 204, 0.5)' },
+            { y: 0.5, speed: 0.012, amp: 70, wave: 0.007, color: 'rgba(189, 224, 254, 0.5)' },
+            { y: 0.7, speed: 0.008, amp: 40, wave: 0.004, color: 'rgba(162, 210, 255, 0.5)' }
+        ];
 
-    for(let i=0; i<60; i++) lines.push(new Line());
-    function animate() { ctx.clearRect(0,0,canvas.width, canvas.height); lines.forEach(l => l.draw()); requestAnimationFrame(animate); }
+        curves.forEach(c => {
+            ctx.beginPath();
+            ctx.strokeStyle = c.color;
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            for (let x = 0; x < canvas.width; x++) {
+                const y = (canvas.height * c.y) + Math.sin(x * c.wave + tick * c.speed) * c.amp;
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+
+        tick++;
+        requestAnimationFrame(animate);
+    }
     animate();
 
     function startQuiz() {
@@ -330,7 +332,6 @@
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
             
-            // Logic: Must be 11/11 to get gift
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! You really love me. ✨`;
                 giftBtn.style.display = 'block';
