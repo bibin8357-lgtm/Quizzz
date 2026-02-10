@@ -14,38 +14,38 @@
             --right-green: #b9fbc0;
         }
 
-        /* Cute Animated Background */
-        body {
+        body, html {
             margin: 0;
             padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #ffc8dd, #ffafcc, #bde0fe, #a2d2ff);
-            background-size: 400% 400%;
-            animation: gradientBG 12s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background-color: #fff0f3;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Canvas Background */
+        #lineCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
         .container {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
             padding: 2.5rem;
             border-radius: 30px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             width: 90%;
             max-width: 400px;
             text-align: center;
-            position: relative;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 10;
-            animation: fadeIn 0.8s ease-out;
+            backdrop-filter: blur(5px);
         }
 
         h1, h2 {
@@ -54,8 +54,20 @@
             margin-bottom: 20px;
         }
 
-        .question-page { display: none; }
-        .active { display: block; animation: slideIn 0.5s forwards; }
+        .page { display: none; }
+        .active { display: block; animation: fadeIn 0.5s forwards; }
+
+        /* Cute Instructions List */
+        .instruction-list {
+            text-align: left;
+            margin: 20px 0;
+            color: #777;
+        }
+        .instruction-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
 
         .options-grid {
             display: grid;
@@ -72,7 +84,6 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: var(--text-color);
             font-weight: bold;
-            outline: none;
         }
 
         button:hover {
@@ -82,7 +93,12 @@
             box-shadow: 0 5px 15px rgba(255, 175, 204, 0.4);
         }
 
-        /* Shake Animation for Wrong Answers */
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            background-color: var(--wrong-red) !important;
+            color: white !important;
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20% { transform: translateX(-10px); }
@@ -91,14 +107,11 @@
             80% { transform: translateX(10px); }
         }
 
-        .shake {
-            animation: shake 0.4s ease-in-out;
-            background-color: var(--wrong-red) !important;
-            border-color: var(--wrong-red) !important;
-            color: white !important;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -45%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
         }
 
-        /* Fireworks Particle Style */
         .particle {
             position: absolute;
             width: 8px;
@@ -107,33 +120,25 @@
             pointer-events: none;
             z-index: 999;
         }
-
-        #gift-box {
-            font-size: 80px;
-            cursor: pointer;
-            transition: transform 0.3s;
-            display: inline-block;
-        }
-
-        #gift-box:hover {
-            transform: scale(1.2) rotate(5deg);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
     </style>
 </head>
 <body>
 
+<canvas id="lineCanvas"></canvas>
+
 <div class="container">
-    <div id="q1" class="question-page active">
+    <div id="instruction-page" class="page active">
+        <h1>Hi Sweetie! 🌸</h1>
+        <p>Before we start, please follow these cute instructions:</p>
+        <div class="instruction-list">
+            <div class="instruction-item">🎀 1. Smile for no reason.</div>
+            <div class="instruction-item">🎀 2. Answer with your heart.</div>
+            <div class="instruction-item">🎀 3. Unlock your special surprise!</div>
+        </div>
+        <button class="btn" onclick="startQuiz()" style="width:100%">I'm Ready! ✨</button>
+    </div>
+
+    <div id="q1" class="page">
         <h2>Question 1</h2>
         <p>Where did we first meet?</p>
         <div class="options-grid">
@@ -144,7 +149,7 @@
         </div>
     </div>
 
-    <div id="q2" class="question-page">
+    <div id="q2" class="page">
         <h2>Question 2</h2>
         <p>What is my favorite color on you?</p>
         <div class="options-grid">
@@ -155,7 +160,7 @@
         </div>
     </div>
 
-    <div id="q3" class="question-page">
+    <div id="q3" class="page">
         <h2>Question 3</h2>
         <p>Which month is our anniversary?</p>
         <div class="options-grid">
@@ -166,7 +171,7 @@
         </div>
     </div>
 
-    <div id="q4" class="question-page">
+    <div id="q4" class="page">
         <h2>Question 4</h2>
         <p>What was our first movie together?</p>
         <div class="options-grid">
@@ -177,7 +182,7 @@
         </div>
     </div>
 
-    <div id="q5" class="question-page">
+    <div id="q5" class="page">
         <h2>Question 5</h2>
         <p>Who said "I love you" first?</p>
         <div class="options-grid">
@@ -188,7 +193,7 @@
         </div>
     </div>
 
-    <div id="q6" class="question-page">
+    <div id="q6" class="page">
         <h2>Question 6</h2>
         <p>What is my favorite snack?</p>
         <div class="options-grid">
@@ -199,22 +204,73 @@
         </div>
     </div>
 
-    <div id="result-page" class="question-page">
+    <div id="result-page" class="page">
         <h2>Results!</h2>
         <p id="result-text"></p>
-        <button id="gift-btn" style="display:none;" onclick="showGift()">Claim Your Gift</button>
+        <button id="gift-btn" style="display:none; width:100%" onclick="showGift()">Claim Your Gift</button>
     </div>
 
-    <div id="gift-page" class="question-page">
-        <h2>For You...</h2>
-        <div id="gift-box" onclick="revealMessage()">🎁</div>
+    <div id="gift-page" class="page">
+        <h1>Happy Valentine's Day! 💌</h1>
+        <div id="gift-box" onclick="revealMessage()" style="font-size: 80px; cursor: pointer;">🎁</div>
         <p id="final-message" style="margin-top:20px; font-weight: bold;"></p>
     </div>
 </div>
 
 <script>
+    // --- BACKGROUND ANIMATION ---
+    const canvas = document.getElementById('lineCanvas');
+    const ctx = canvas.getContext('2d');
+    let lines = [];
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Line {
+        constructor() {
+            this.reset();
+        }
+        reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.len = Math.random() * 80 + 20;
+            this.speed = Math.random() * 2 + 0.5;
+            this.opacity = Math.random() * 0.4 + 0.1;
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(255, 175, 204, ${this.opacity})`;
+            ctx.lineWidth = 2;
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(this.x + this.len, this.y - this.len);
+            ctx.stroke();
+            this.x += this.speed;
+            this.y -= this.speed;
+            if (this.x > canvas.width || this.y < 0) this.reset();
+        }
+    }
+
+    for(let i=0; i<60; i++) lines.push(new Line());
+
+    function animate() {
+        ctx.clearRect(0,0,canvas.width, canvas.height);
+        lines.forEach(l => l.draw());
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    // --- LOGIC ---
     let currentStep = 1;
     let score = 0;
+
+    function startQuiz() {
+        document.getElementById('instruction-page').classList.remove('active');
+        document.getElementById('q1').classList.add('active');
+    }
 
     function next(btn, isCorrect) {
         handleFeedback(btn, isCorrect, () => {
@@ -230,18 +286,14 @@
             if(isCorrect) score++;
             document.getElementById(`q6`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
-            
             const text = document.getElementById('result-text');
             if(score >= 3) {
-                text.innerText = `Yay! You got ${score}/6 correct! You know me so well.`;
+                text.innerText = `Yay! You got ${score}/6 correct!`;
                 document.getElementById('gift-btn').style.display = 'inline-block';
             } else {
-                text.innerText = `You got ${score}/6. Don't worry, I still love you! Try again?`;
-                const tryAgainBtn = document.createElement('button');
-                tryAgainBtn.innerText = "Try Again";
-                tryAgainBtn.style.marginTop = "15px";
-                tryAgainBtn.onclick = () => location.reload();
-                document.getElementById('result-page').appendChild(tryAgainBtn);
+                text.innerText = `You got ${score}/6. I still love you!`;
+                document.getElementById('gift-btn').style.display = 'inline-block'; 
+                document.getElementById('gift-btn').innerText = "Get Love Anyway";
             }
         });
     }
@@ -250,40 +302,30 @@
         if (isCorrect) {
             btn.style.backgroundColor = "#b9fbc0";
             createFireworks();
-            // Small delay for the correct answer so they see the firework before page switch
-            setTimeout(callback, 1000);
+            setTimeout(callback, 800);
         } else {
             btn.classList.add('shake');
             setTimeout(() => {
                 btn.classList.remove('shake');
-                callback(); // Switch page even if wrong
+                callback();
             }, 500);
         }
     }
 
     function createFireworks() {
-        const colors = ['#ffafcc', '#ffc8dd', '#bde0fe', '#a2d2ff', '#fb6f92'];
-        for (let i = 0; i < 40; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            
-            // Spawn particles at the center of the container
-            particle.style.left = '50%';
-            particle.style.top = '50%';
-            
-            document.body.appendChild(particle);
-            
-            const destX = (Math.random() - 0.5) * 800;
-            const destY = (Math.random() - 0.5) * 800;
-            
-            particle.animate([
+        const colors = ['#ffafcc', '#ffc8dd', '#bde0fe', '#a2d2ff'];
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            p.style.left = '50%'; p.style.top = '50%';
+            document.body.appendChild(p);
+            const destX = (Math.random() - 0.5) * 600;
+            const destY = (Math.random() - 0.5) * 600;
+            p.animate([
                 { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
                 { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: 1000 + Math.random() * 500,
-                easing: 'ease-out'
-            }).onfinish = () => particle.remove();
+            ], 1000).onfinish = () => p.remove();
         }
     }
 
@@ -294,10 +336,9 @@
 
     function revealMessage() {
         document.getElementById('gift-box').innerHTML = "💖";
-        document.getElementById('final-message').innerText = "[YOUR CUSTOM SENTENCE WILL GO HERE]";
-        createFireworks(); // Extra fireworks for the big reveal!
+        document.getElementById('final-message').innerText = "You are my favorite person in the whole universe!";
+        createFireworks();
     }
 </script>
-
 </body>
 </html>
