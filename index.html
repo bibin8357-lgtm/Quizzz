@@ -9,9 +9,8 @@
         :root {
             --pink: #ffafcc;
             --text-color: #5e548e;
-            --wrong-red: #ffccd5; /* Light Red for wrong answers */
+            --wrong-red: #ffccd5; 
             --right-green: #b9fbc0;
-            --glass: rgba(255, 255, 255, 0.92);
         }
 
         * { box-sizing: border-box; }
@@ -112,7 +111,6 @@
             font-family: 'Quicksand', sans-serif;
             font-weight: 700;
             font-size: 1rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
         button:hover { 
@@ -158,6 +156,7 @@
             color: #444;
         }
 
+        /* CUTE BACK BUTTON */
         .back-icon {
             font-size: 0.9rem;
             cursor: pointer;
@@ -369,37 +368,39 @@
         if(isCorrect) { 
             score++; 
             btn.style.backgroundColor = "#b9fbc0"; 
-            createFireworks(30); 
-            setTimeout(() => {
-                document.getElementById(`q${currentStep}`).classList.remove('active');
-                currentStep++;
-                document.getElementById(`q${currentStep}`).classList.add('active');
-            }, 600);
-        }
-        else { 
+            createFireworks(35); 
+        } else { 
             btn.classList.add('shake'); 
-            setTimeout(() => btn.classList.remove('shake'), 400);
         }
+        
+        // Always go to next question after animation
+        setTimeout(() => {
+            document.getElementById(`q${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`q${currentStep}`).classList.add('active');
+        }, 600);
     }
 
     function checkScore(btn, isCorrect) {
         if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
-        else { 
-            btn.classList.add('shake'); 
-            setTimeout(() => btn.classList.remove('shake'), 400);
-            return;
-        }
+        else { btn.classList.add('shake'); }
+
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
+            
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! ✨`;
-                giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
+                giftBtn.style.display = 'block'; 
+                giftBtn.innerText = "Claim Your Gifts"; 
+                giftBtn.onclick = showGift;
             } else {
-                text.innerText = `You got ${score}/11. Need 11/11 for the surprise!`;
-                giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
+                text.innerText = `You got ${score}/11. You must get EVERY answer correct to see the surprise! 🌸`;
+                giftBtn.style.display = 'block'; 
+                giftBtn.innerText = "Try Again 🔄"; 
+                giftBtn.onclick = () => location.reload();
             }
         }, 600);
     }
