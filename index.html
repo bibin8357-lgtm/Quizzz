@@ -34,7 +34,6 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
-        /* MOVING ANIMATION IN QUIZ BOX */
         .container {
             background: linear-gradient(-45deg, #ffffff, #fff0f3, #f0f7ff, #ffffff);
             background-size: 300% 300%;
@@ -57,32 +56,23 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* MUSIC TOGGLE STYLE */
-        .music-toggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
+        /* SURPRISE MUSIC BUTTON STYLE */
+        .music-btn-inline {
+            background: #ffc8dd;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
             cursor: pointer;
-            z-index: 100;
-            background: white;
-            width: 40px;
-            height: 40px;
-            display: flex;
+            margin-bottom: 10px;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            gap: 8px;
             transition: 0.3s;
         }
-        .music-toggle:hover { transform: scale(1.1); }
-        .playing { animation: pulse 1.5s infinite; background: var(--pink); }
-
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 175, 204, 0.7); }
-            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 175, 204, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 175, 204, 0); }
-        }
+        .music-btn-inline:hover { background: #ffafcc; transform: scale(1.05); }
 
         h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.5rem; }
         h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2rem; margin-bottom: 10px; }
@@ -143,8 +133,7 @@
 
         .gift-container { display: flex; justify-content: center; gap: 30px; margin: 30px 0; }
         .gift-item { font-size: 70px; cursor: pointer; transition: 0.3s; animation: wobble 2s infinite; }
-        .gift-item:hover { transform: scale(1.2); }
-
+        
         @keyframes wobble {
             0%, 100% { transform: rotate(0deg); }
             25% { transform: rotate(5deg); }
@@ -176,7 +165,6 @@
             box-shadow: 0 4px 10px rgba(255, 175, 204, 0.4);
             transition: 0.3s;
         }
-        .back-icon:hover { background: #ffafcc; transform: scale(1.1); }
 
         .reveal-pass {
             opacity: 0;
@@ -197,7 +185,6 @@
 <canvas id="lineCanvas"></canvas>
 
 <div class="container">
-    <div class="music-toggle" onclick="toggleMusic()" id="musicBtn">🎵</div>
     <audio id="bgMusic" loop>
         <source src="music.mp3.mp3" type="audio/mpeg">
     </audio>
@@ -213,86 +200,17 @@
         <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
 
-    <div id="q1" class="page">
-        <h2>Question 1</h2><p>What am I to you?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">All of these</button>
-            <button onclick="next(this, false)">My comfort</button>
-            <button onclick="next(this, false)">Special person</button>
-            <button onclick="next(this, false)">Most fav person ever</button>
-        </div>
-    </div>
-    <div id="q2" class="page">
-        <h2>Question 2</h2><p>Which of our dates will always be your favourite?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">kadhal cafe</button>
-            <button onclick="next(this, true)">Tvm Cafee</button>
-            <button onclick="next(this, false)">Coocon</button>
-            <button onclick="next(this, false)">Ayushus</button>
-        </div>
-    </div>
-    <div id="q3" class="page">
-        <h2>Question 3</h2><p>Which outfits did I like you wearing the most?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Casual Outfits</button><button onclick="next(this, false)">Traditional Outfits</button>
-            <button onclick="next(this, true)">All of these (bzc its you)</button><button onclick="next(this, false)">The Hot Outfits</button>
-        </div>
-    </div>
-    <div id="q4" class="page">
-        <h2>Question 4</h2><p>Which day do you think I still remember clearly?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">Tvm Days</button><button onclick="next(this, false)">Kadhal Cafe</button>
-            <button onclick="next(this, false)">Coocon</button><button onclick="next(this, false)">Ayushus</button>
-        </div>
-    </div>
-    <div id="q5" class="page">
-        <h2>Question 5</h2><p>When I looked at you first day, what did I feel?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">Fully Nervous</button><button onclick="next(this, false)">Calm</button>
-            <button onclick="next(this, false)">Shy</button><button onclick="next(this, false)">Happyy</button>
-        </div>
-    </div>
-    <div id="q6" class="page">
-        <h2>Question 6</h2><p>What is my favorite Food?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Alfamm</button><button onclick="next(this, true)">Youhh</button>
-            <button onclick="next(this, false)">Mandhi</button><button onclick="next(this, false)">Momos and orange Juice</button>
-        </div>
-    </div>
-    <div id="q7" class="page">
-        <h2>Question 7</h2><p>Who is more annoying?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Me</button><button onclick="next(this, true)">Definitely You</button>
-            <button onclick="next(this, false)">Both of us</button><button onclick="next(this, false)">Neither</button>
-        </div>
-    </div>
-    <div id="q8" class="page">
-        <h2>Question 8</h2><p>What is my favorite thing about you?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Your Eyes</button><button onclick="next(this, false)">Your Smile</button>
-            <button onclick="next(this, true)">Everything!</button><button onclick="next(this, false)">Effortless Movement</button>
-        </div>
-    </div>
-    <div id="q9" class="page">
-        <h2>Question 9</h2><p>Which is my fav thing you says?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Bibinee</button><button onclick="next(this, true)">Entha Bibinneee</button>
-            <button onclick="next(this, false)">Babbyyy</button><button onclick="next(this, false)">Poddaaa</button>
-        </div>
-    </div>
-    <div id="q10" class="page">
-        <h2>Question 10</h2><p>Do you love me?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">YESSS!</button><button onclick="next(this, false)">No</button>
-            <button onclick="next(this, false)">Maybe</button><button onclick="next(this, false)">I'll think about it</button>
-        </div>
-    </div>
-    <div id="q11" class="page">
-        <h2>Question 11</h2><p>Will you be my Valentine? </p>
-        <div class="options-grid">
-            <button onclick="checkScore(this, true)">YES!</button><button onclick="checkScore(this, false)">No way</button>
-        </div>
-    </div>
+    <div id="q1" class="page"><h2>Question 1</h2><p>What am I to you?</p><div class="options-grid"><button onclick="next(this, true)">All of these</button><button onclick="next(this, false)">My comfort</button><button onclick="next(this, false)">Special person</button><button onclick="next(this, false)">Most fav person ever</button></div></div>
+    <div id="q2" class="page"><h2>Question 2</h2><p>Which of our dates will always be your favourite?</p><div class="options-grid"><button onclick="next(this, false)">kadhal cafe</button><button onclick="next(this, true)">Tvm Cafee</button><button onclick="next(this, false)">Coocon</button><button onclick="next(this, false)">Ayushus</button></div></div>
+    <div id="q3" class="page"><h2>Question 3</h2><p>Which outfits did I like you wearing the most?</p><div class="options-grid"><button onclick="next(this, false)">Casual Outfits</button><button onclick="next(this, false)">Traditional Outfits</button><button onclick="next(this, true)">All of these (bzc its you)</button><button onclick="next(this, false)">The Hot Outfits</button></div></div>
+    <div id="q4" class="page"><h2>Question 4</h2><p>Which day do you think I still remember clearly?</p><div class="options-grid"><button onclick="next(this, true)">Tvm Days</button><button onclick="next(this, false)">Kadhal Cafe</button><button onclick="next(this, false)">Coocon</button><button onclick="next(this, false)">Ayushus</button></div></div>
+    <div id="q5" class="page"><h2>Question 5</h2><p>When I looked at you first day, what did I feel?</p><div class="options-grid"><button onclick="next(this, true)">Fully Nervous</button><button onclick="next(this, false)">Calm</button><button onclick="next(this, false)">Shy</button><button onclick="next(this, false)">Happyy</button></div></div>
+    <div id="q6" class="page"><h2>Question 6</h2><p>What is my favorite Food?</p><div class="options-grid"><button onclick="next(this, false)">Alfamm</button><button onclick="next(this, true)">Youhh</button><button onclick="next(this, false)">Mandhi</button><button onclick="next(this, false)">Momos and orange Juice</button></div></div>
+    <div id="q7" class="page"><h2>Question 7</h2><p>Who is more annoying?</p><div class="options-grid"><button onclick="next(this, false)">Me</button><button onclick="next(this, true)">Definitely You</button><button onclick="next(this, false)">Both of us</button><button onclick="next(this, false)">Neither</button></div></div>
+    <div id="q8" class="page"><h2>Question 8</h2><p>What is my favorite thing about you?</p><div class="options-grid"><button onclick="next(this, false)">Your Eyes</button><button onclick="next(this, false)">Your Smile</button><button onclick="next(this, true)">Everything!</button><button onclick="next(this, false)">Effortless Movement</button></div></div>
+    <div id="q9" class="page"><h2>Question 9</h2><p>Which is my fav thing you says?</p><div class="options-grid"><button onclick="next(this, false)">Bibinee</button><button onclick="next(this, true)">Entha Bibinneee</button><button onclick="next(this, false)">Babbyyy</button><button onclick="next(this, false)">Poddaaa</button></div></div>
+    <div id="q10" class="page"><h2>Question 10</h2><p>Do you love me?</p><div class="options-grid"><button onclick="next(this, true)">YESSS!</button><button onclick="next(this, false)">No</button><button onclick="next(this, false)">Maybe</button><button onclick="next(this, false)">I'll think about it</button></div></div>
+    <div id="q11" class="page"><h2>Question 11</h2><p>Will you be my Valentine? </p><div class="options-grid"><button onclick="checkScore(this, true)">YES!</button><button onclick="checkScore(this, false)">No way</button></div></div>
 
     <div id="result-page" class="page">
         <h2>Results!</h2>
@@ -311,7 +229,9 @@
         </div>
 
         <div id="letter-view" class="letter-view">
-            <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
+            <div class="back-icon" onclick="backToGifts()">🌸 Back & Stop Music</div>
+            <br>
+            <div class="music-btn-inline" onclick="toggleMusic()">🎵 Play Music</div>
             <div class="letter-paper">
                 My Dearest Archana,<br><br>
                 Thank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. <br><br>
@@ -321,8 +241,9 @@
         </div>
 
         <div id="password-view" class="password-view">
-            <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
+            <div class="back-icon" onclick="backToGifts()">🌸 Back & Stop Music</div>
             <div style="text-align: center; color: var(--text-color);">
+                <div class="music-btn-inline" onclick="toggleMusic()">🎵 Play Music</div>
                 <h1 style="font-size: 50px;">🥹🫶🏻</h1>
                 <p>The secret gift password is:</p>
                 <h2 class="reveal-pass" style="color: #ff4d6d; background: white; padding: 10px; border-radius: 10px; border: 2px dashed #ffafcc;">
@@ -340,20 +261,16 @@
     let score = 0;
     let time = 0;
 
-    // MUSIC LOGIC
     const music = document.getElementById('bgMusic');
-    const musicBtn = document.getElementById('musicBtn');
     
     function toggleMusic() {
-        if (music.paused) {
-            music.play();
-            musicBtn.classList.add('playing');
-            musicBtn.innerText = "⏸️";
-        } else {
-            music.pause();
-            musicBtn.classList.remove('playing');
-            musicBtn.innerText = "🎵";
-        }
+        if (music.paused) { music.play(); } 
+        else { music.pause(); }
+    }
+
+    function stopMusic() {
+        music.pause();
+        music.currentTime = 0; // Reset to start
     }
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -392,14 +309,8 @@
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { 
-            score++; 
-            btn.style.backgroundColor = "#b9fbc0"; 
-            createFireworks(35); 
-        } else { 
-            btn.classList.add('shake'); 
-        }
-        
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(35); } 
+        else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
@@ -410,23 +321,17 @@
     function checkScore(btn, isCorrect) {
         if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
         else { btn.classList.add('shake'); }
-
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
-            
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! ✨`;
-                giftBtn.style.display = 'block'; 
-                giftBtn.innerText = "Claim Your Gifts"; 
-                giftBtn.onclick = showGift;
+                giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
             } else {
                 text.innerText = `You got ${score}/11. You must get EVERY answer correct to see the surprise! 🌸`;
-                giftBtn.style.display = 'block'; 
-                giftBtn.innerText = "Try Again 🔄"; 
-                giftBtn.onclick = () => location.reload();
+                giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
             }
         }, 600);
     }
@@ -455,10 +360,10 @@
         document.getElementById('letter-view').style.display = 'none';
         document.getElementById('password-view').style.display = 'none';
         document.getElementById(viewId).style.display = 'block';
-        if(viewId === 'password-view') createFireworks(50);
     }
 
     function backToGifts() {
+        stopMusic(); // Stops music when returning
         document.getElementById('letter-view').style.display = 'none';
         document.getElementById('password-view').style.display = 'none';
         document.getElementById('gift-selection').style.display = 'block';
