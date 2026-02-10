@@ -65,7 +65,6 @@
 
         button:hover { background: var(--pink); color: white; transform: translateY(-2px); }
 
-        /* Animations */
         .shake {
             animation: shake 0.4s ease-in-out;
             background-color: var(--wrong-red) !important;
@@ -83,7 +82,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Gift Box Animation */
         #gift-box {
             font-size: 80px;
             cursor: pointer;
@@ -92,13 +90,9 @@
             animation: wobble 2s infinite;
         }
 
-        #gift-box:hover {
-            transform: scale(1.2);
-        }
+        #gift-box:hover { transform: scale(1.2); }
 
-        #gift-box.open {
-            animation: popOpen 0.5s forwards;
-        }
+        #gift-box.open { animation: popOpen 0.5s forwards; }
 
         @keyframes wobble {
             0%, 100% { transform: rotate(0deg); }
@@ -277,20 +271,23 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // Create 50 distinct curved lines with different properties
     const curveLines = [];
-    const colors = ['#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db'];
+    const colors = [
+        '#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db', 
+        '#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9'
+    ];
 
-    for(let i = 0; i < 50; i++) {
+    // Generating exactly 500 curves
+    for(let i = 0; i < 500; i++) {
         curveLines.push({
             yBase: Math.random() * canvas.height,
-            amplitude: Math.random() * 60 + 20,
-            frequency: Math.random() * 0.005 + 0.002,
-            speed: Math.random() * 0.02 + 0.005,
-            offset: Math.random() * 1000,
+            amplitude: Math.random() * 40 + 10,
+            frequency: Math.random() * 0.006 + 0.001,
+            speed: Math.random() * 0.015 + 0.005,
+            offset: Math.random() * 5000,
             color: colors[Math.floor(Math.random() * colors.length)],
-            width: Math.random() * 2 + 1,
-            opacity: Math.random() * 0.5 + 0.2
+            width: Math.random() * 1.5 + 0.5,
+            opacity: Math.random() * 0.2 + 0.1 // Lower opacity for 500 lines to look elegant
         });
     }
 
@@ -303,10 +300,10 @@
             ctx.globalAlpha = line.opacity;
             ctx.lineWidth = line.width;
             
-            for (let x = 0; x < canvas.width; x += 5) {
+            ctx.moveTo(0, line.yBase);
+            for (let x = 0; x < canvas.width; x += 15) { // Skip points slightly for performance
                 const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
-                if (x === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
+                ctx.lineTo(x, y);
             }
             ctx.stroke();
         });
