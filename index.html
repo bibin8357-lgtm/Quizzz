@@ -10,44 +10,36 @@
             --pink: #ffafcc;
             --soft-white: #f8f9fa;
             --text-color: #5e548e;
+            --wrong-red: #ff8fa3;
+            --right-green: #b9fbc0;
         }
 
+        /* Cute Animated Background */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Poppins', sans-serif;
-            background-color: #ffc8dd;
+            background: linear-gradient(-45deg, #ffc8dd, #ffafcc, #bde0fe, #a2d2ff);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            position: relative;
         }
 
-        /* --- Floating Emojis Background --- */
-        .bg-emoji {
-            position: absolute;
-            font-size: 24px;
-            user-select: none;
-            z-index: -1;
-            animation: float 10s linear infinite;
-            opacity: 0.6;
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        @keyframes float {
-            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-        }
-
-        /* --- Main Container --- */
         .container {
             background: white;
-            padding: 2rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 2.5rem;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             width: 90%;
             max-width: 400px;
             text-align: center;
@@ -67,37 +59,53 @@
 
         .options-grid {
             display: grid;
-            gap: 10px;
+            gap: 12px;
             margin-top: 20px;
         }
 
         button {
-            padding: 12px;
+            padding: 14px;
             border: 2px solid var(--pink);
             background: white;
-            border-radius: 12px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             color: var(--text-color);
             font-weight: bold;
             outline: none;
         }
 
         button:hover {
+            transform: translateY(-3px);
             background: var(--pink);
             color: white;
+            box-shadow: 0 5px 15px rgba(255, 175, 204, 0.4);
         }
 
-        /* --- Shake Animation --- */
-        .shake {
-            animation: shake 0.4s ease-in-out;
-        }
-
+        /* Shake Animation for Wrong Answers */
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
+            20% { transform: translateX(-10px); }
+            40% { transform: translateX(10px); }
+            60% { transform: translateX(-10px); }
+            80% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            background-color: var(--wrong-red) !important;
+            border-color: var(--wrong-red) !important;
+            color: white !important;
+        }
+
+        /* Fireworks Particle Style */
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 999;
         }
 
         #gift-box {
@@ -124,22 +132,15 @@
 </head>
 <body>
 
-<div class="bg-emoji" style="left: 10%; animation-delay: 0s;">🩵</div>
-<div class="bg-emoji" style="left: 25%; animation-delay: 2s;">🩶</div>
-<div class="bg-emoji" style="left: 45%; animation-delay: 4s;">🖤</div>
-<div class="bg-emoji" style="left: 65%; animation-delay: 1s;">🧡</div>
-<div class="bg-emoji" style="left: 80%; animation-delay: 5s;">❤️</div>
-<div class="bg-emoji" style="left: 90%; animation-delay: 3s;">🩵</div>
-
 <div class="container">
     <div id="q1" class="question-page active">
         <h2>Question 1</h2>
         <p>Where did we first meet?</p>
         <div class="options-grid">
-            <button onclick="handleBtn(this, true)">The Coffee Shop</button>
-            <button onclick="handleBtn(this, false)">The Park</button>
-            <button onclick="handleBtn(this, false)">In School</button>
-            <button onclick="handleBtn(this, false)">Online</button>
+            <button onclick="next(this, true)">The Coffee Shop</button>
+            <button onclick="next(this, false)">The Park</button>
+            <button onclick="next(this, false)">In School</button>
+            <button onclick="next(this, false)">Online</button>
         </div>
     </div>
 
@@ -147,10 +148,10 @@
         <h2>Question 2</h2>
         <p>What is my favorite color on you?</p>
         <div class="options-grid">
-            <button onclick="handleBtn(this, false)">Blue</button>
-            <button onclick="handleBtn(this, true)">Red</button>
-            <button onclick="handleBtn(this, false)">Black</button>
-            <button onclick="handleBtn(this, false)">White</button>
+            <button onclick="next(this, false)">Blue</button>
+            <button onclick="next(this, true)">Red</button>
+            <button onclick="next(this, false)">Black</button>
+            <button onclick="next(this, false)">White</button>
         </div>
     </div>
 
@@ -158,10 +159,10 @@
         <h2>Question 3</h2>
         <p>Which month is our anniversary?</p>
         <div class="options-grid">
-            <button onclick="handleBtn(this, false)">January</button>
-            <button onclick="handleBtn(this, false)">June</button>
-            <button onclick="handleBtn(this, true)">October</button>
-            <button onclick="next(false)">December</button>
+            <button onclick="next(this, false)">January</button>
+            <button onclick="next(this, false)">June</button>
+            <button onclick="next(this, true)">October</button>
+            <button onclick="next(this, false)">December</button>
         </div>
     </div>
 
@@ -169,10 +170,10 @@
         <h2>Question 4</h2>
         <p>What was our first movie together?</p>
         <div class="options-grid">
-            <button onclick="handleBtn(this, true)">Titanic</button>
-            <button onclick="handleBtn(this, false)">The Notebook</button>
-            <button onclick="handleBtn(this, false)">About Time</button>
-            <button onclick="handleBtn(this, false)">Shrek</button>
+            <button onclick="next(this, true)">Titanic</button>
+            <button onclick="next(this, false)">The Notebook</button>
+            <button onclick="next(this, false)">About Time</button>
+            <button onclick="next(this, false)">Shrek</button>
         </div>
     </div>
 
@@ -180,10 +181,10 @@
         <h2>Question 5</h2>
         <p>Who said "I love you" first?</p>
         <div class="options-grid">
-            <button onclick="handleBtn(this, true)">Me</button>
-            <button onclick="handleBtn(this, false)">You</button>
-            <button onclick="handleBtn(this, false)">Both at once</button>
-            <button onclick="handleBtn(this, false)">Still waiting!</button>
+            <button onclick="next(this, true)">Me</button>
+            <button onclick="next(this, false)">You</button>
+            <button onclick="next(this, false)">Both at once</button>
+            <button onclick="next(this, false)">Still waiting!</button>
         </div>
     </div>
 
@@ -191,10 +192,10 @@
         <h2>Question 6</h2>
         <p>What is my favorite snack?</p>
         <div class="options-grid">
-            <button onclick="handleLastBtn(this, false)">Pizza</button>
-            <button onclick="handleLastBtn(this, true)">Chocolate</button>
-            <button onclick="handleLastBtn(this, false)">Ice Cream</button>
-            <button onclick="handleLastBtn(this, false)">Chips</button>
+            <button onclick="checkScore(this, false)">Pizza</button>
+            <button onclick="checkScore(this, true)">Chocolate</button>
+            <button onclick="checkScore(this, false)">Ice Cream</button>
+            <button onclick="checkScore(this, false)">Chips</button>
         </div>
     </div>
 
@@ -215,21 +216,17 @@
     let currentStep = 1;
     let score = 0;
 
-    // Function to handle shake then move to next
-    function handleBtn(btn, isCorrect) {
-        btn.classList.add('shake');
-        setTimeout(() => {
+    function next(btn, isCorrect) {
+        handleFeedback(btn, isCorrect, () => {
             if(isCorrect) score++;
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
             document.getElementById(`q${currentStep}`).classList.add('active');
-        }, 400); 
+        });
     }
 
-    // Special handler for the final question
-    function handleLastBtn(btn, isCorrect) {
-        btn.classList.add('shake');
-        setTimeout(() => {
+    function checkScore(btn, isCorrect) {
+        handleFeedback(btn, isCorrect, () => {
             if(isCorrect) score++;
             document.getElementById(`q6`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
@@ -240,13 +237,54 @@
                 document.getElementById('gift-btn').style.display = 'inline-block';
             } else {
                 text.innerText = `You got ${score}/6. Don't worry, I still love you! Try again?`;
-                const retryBtn = document.createElement('button');
-                retryBtn.innerText = "Try Again";
-                retryBtn.style.marginTop = "10px";
-                retryBtn.onclick = () => location.reload();
-                document.getElementById('result-page').appendChild(retryBtn);
+                const tryAgainBtn = document.createElement('button');
+                tryAgainBtn.innerText = "Try Again";
+                tryAgainBtn.style.marginTop = "15px";
+                tryAgainBtn.onclick = () => location.reload();
+                document.getElementById('result-page').appendChild(tryAgainBtn);
             }
-        }, 400);
+        });
+    }
+
+    function handleFeedback(btn, isCorrect, callback) {
+        if (isCorrect) {
+            btn.style.backgroundColor = "#b9fbc0";
+            createFireworks();
+            // Small delay for the correct answer so they see the firework before page switch
+            setTimeout(callback, 1000);
+        } else {
+            btn.classList.add('shake');
+            setTimeout(() => {
+                btn.classList.remove('shake');
+                callback(); // Switch page even if wrong
+            }, 500);
+        }
+    }
+
+    function createFireworks() {
+        const colors = ['#ffafcc', '#ffc8dd', '#bde0fe', '#a2d2ff', '#fb6f92'];
+        for (let i = 0; i < 40; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // Spawn particles at the center of the container
+            particle.style.left = '50%';
+            particle.style.top = '50%';
+            
+            document.body.appendChild(particle);
+            
+            const destX = (Math.random() - 0.5) * 800;
+            const destY = (Math.random() - 0.5) * 800;
+            
+            particle.animate([
+                { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 1000 + Math.random() * 500,
+                easing: 'ease-out'
+            }).onfinish = () => particle.remove();
+        }
     }
 
     function showGift() {
@@ -257,6 +295,7 @@
     function revealMessage() {
         document.getElementById('gift-box').innerHTML = "💖";
         document.getElementById('final-message').innerText = "[YOUR CUSTOM SENTENCE WILL GO HERE]";
+        createFireworks(); // Extra fireworks for the big reveal!
     }
 </script>
 
