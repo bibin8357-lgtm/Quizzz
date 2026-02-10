@@ -130,26 +130,55 @@
 
         .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 999; }
 
-        /* Cute Reason Toast */
-        #reason-toast {
-            position: absolute; bottom: -50px; left: 50%; transform: translateX(-50%);
-            background: white; color: #ff4d6d; padding: 10px 20px; border-radius: 50px;
-            font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            opacity: 0; transition: 0.5s; z-index: 100; pointer-events: none; width: 80%;
+        /* --- NEW STYLES: VINYL RECORD --- */
+        .vinyl-container {
+            width: 120px; height: 120px; margin: 20px auto;
+            position: relative; border-radius: 50%;
+            background: #111; border: 5px solid #333;
+            display: flex; justify-content: center; align-items: center;
+            animation: spin 3s linear infinite;
         }
-        .toast-active { bottom: 20px !important; opacity: 1 !important; }
+        .vinyl-center {
+            width: 40px; height: 40px; background: #ff4d6d;
+            border-radius: 50%; border: 3px solid #000;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* --- NEW STYLES: REASONS TOAST --- */
+        #reason-toast {
+            margin-top: 15px; font-weight: 600; color: #ff4d6d;
+            font-style: italic; min-height: 24px; transition: 0.3s;
+        }
+
+        /* --- NEW STYLES: HEART HUG ANIMATION --- */
+        #hug-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9); z-index: 1000;
+            display: none; justify-content: center; align-items: center;
+        }
+        .hug-heart { font-size: 80px; position: absolute; animation: heartHug 2s forwards; }
+        @keyframes heartHug {
+            0% { transform: scale(1) translateX(-100px); opacity: 0; }
+            50% { transform: scale(1.3) translateX(0); opacity: 1; }
+            100% { transform: scale(1) translateX(0); opacity: 0; }
+        }
     </style>
 </head>
 <body>
 
 <canvas id="lineCanvas"></canvas>
 
+<div id="hug-overlay">
+    <div class="hug-heart" style="left: calc(50% - 60px);">❤️</div>
+    <div class="hug-heart" style="left: calc(50% + 10px);">💖</div>
+</div>
+
 <div class="container">
     <audio id="bgMusic" loop><source src="music.mp3.mp3" type="audio/mpeg"></audio>
 
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
-        <p>Follow the instruction:</p>
+        <p>Follow the instructions:</p>
         <div style="text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem;">
             <div>✨ 1. Don’t Smile.</div>
             <div>✨ 2. Correct all the answers (11/11).</div>
@@ -159,6 +188,15 @@
     </div>
 
     <div id="q1" class="page"><h2>Question 1</h2><p>What am I to you?</p><div class="options-grid"><button onclick="next(this, true)">All of these</button><button onclick="next(this, false)">My comfort</button><button onclick="next(this, false)">Special person</button><button onclick="next(this, false)">Most fav person ever</button></div></div>
+    <div id="q2" class="page"><h2>Question 2</h2><p>Which of our dates will always be your favourite?</p><div class="options-grid"><button onclick="next(this, false)">kadhal cafe</button><button onclick="next(this, true)">Tvm Cafee</button><button onclick="next(this, false)">Coocon</button><button onclick="next(this, false)">Ayushus</button></div></div>
+    <div id="q3" class="page"><h2>Question 3</h2><p>Which outfits did I like you wearing the most?</p><div class="options-grid"><button onclick="next(this, false)">Casual Outfits</button><button onclick="next(this, false)">Traditional Outfits</button><button onclick="next(this, true)">All of these (bzc its you)</button><button onclick="next(this, false)">The Hot Outfits</button></div></div>
+    <div id="q4" class="page"><h2>Question 4</h2><p>Which day do you think I still remember clearly?</p><div class="options-grid"><button onclick="next(this, true)">Tvm Days</button><button onclick="next(this, false)">Kadhal Cafe</button><button onclick="next(this, false)">Coocon</button><button onclick="next(this, false)">Ayushus</button></div></div>
+    <div id="q5" class="page"><h2>Question 5</h2><p>When I looked at you first day, what did I feel?</p><div class="options-grid"><button onclick="next(this, true)">Fully Nervous</button><button onclick="next(this, false)">Calm</button><button onclick="next(this, false)">Shy</button><button onclick="next(this, false)">Happyy</button></div></div>
+    <div id="q6" class="page"><h2>Question 6</h2><p>What is my favorite Food?</p><div class="options-grid"><button onclick="next(this, false)">Alfamm</button><button onclick="next(this, true)">Youhh</button><button onclick="next(this, false)">Mandhi</button><button onclick="next(this, false)">Momos and orange Juice</button></div></div>
+    <div id="q7" class="page"><h2>Question 7</h2><p>Who is more annoying?</p><div class="options-grid"><button onclick="next(this, false)">Me</button><button onclick="next(this, true)">Definitely You</button><button onclick="next(this, false)">Both of us</button><button onclick="next(this, false)">Neither</button></div></div>
+    <div id="q8" class="page"><h2>Question 8</h2><p>What is my favorite thing about you?</p><div class="options-grid"><button onclick="next(this, false)">Your Eyes</button><button onclick="next(this, false)">Your Smile</button><button onclick="next(this, true)">Everything!</button><button onclick="next(this, false)">Effortless Movement</button></div></div>
+    <div id="q9" class="page"><h2>Question 9</h2><p>Which is my fav thing you says?</p><div class="options-grid"><button onclick="next(this, false)">Bibinee</button><button onclick="next(this, true)">Entha Bibinneee</button><button onclick="next(this, false)">Babbyyy</button><button onclick="next(this, false)">Poddaaa</button></div></div>
+    <div id="q10" class="page"><h2>Question 10</h2><p>Do you love me?</p><div class="options-grid"><button onclick="next(this, true)">YESSS!</button><button onclick="next(this, false)">No</button><button onclick="next(this, false)">Maybe</button><button onclick="next(this, false)">I'll think about it</button></div></div>
     <div id="q11" class="page"><h2>Question 11</h2><p>Will you be my Valentine? </p><div class="options-grid"><button onclick="checkScore(this, true)">YES!</button><button onclick="checkScore(this, false)">No way</button></div></div>
 
     <div id="result-page" class="page">
@@ -176,13 +214,15 @@
                 <div class="gift-item" onclick="openView('music-view', true)">🎵</div>
                 <div class="gift-item" onclick="openView('password-view')">🎁</div>
             </div>
-            <button onclick="showReason()" style="width: auto; padding: 10px 25px; margin-top: 10px; font-size: 0.8rem; background: #fff0f3;">Tap for a secret 🤫</button>
+            <button onclick="showNextReason()" style="padding: 10px 20px; font-size: 0.8rem; background: #fff; margin-top: 10px;">A Message for You 💖</button>
+            <div id="reason-toast"></div>
         </div>
 
-        <div id="reason-toast" class="reason-toast"></div>
-
         <div id="music-view" class="music-view">
-            <div style="text-align: center; margin-top: 20px;">
+            <div class="vinyl-container">
+                <div class="vinyl-center"></div>
+            </div>
+            <div style="text-align: center;">
                 <p class="music-text">
                     Every note of this song reminds me of you. <br>
                     You are the melody in my heart, Archana. <br>
@@ -210,25 +250,136 @@
 </div>
 
 <script>
-    // ... (Keep all your existing JS for Canvas and Logic) ...
+    const canvas = document.getElementById('lineCanvas');
+    const ctx = canvas.getContext('2d');
+    let currentStep = 1; let score = 0; let time = 0;
+    const music = document.getElementById('bgMusic');
 
+    // REASONS ARRAY
     const reasons = [
-        "Your smile is my favorite view. 😍",
-        "I love the way you talk to me. ❤️",
-        "You are my safest place. 🏠",
-        "Everything is better with you. ✨",
-        "You're the most beautiful person I know. 🌸"
+        "Because your smile makes my day ✨",
+        "Because you are my best friend 🫶",
+        "Because you make me feel special 🌸",
+        "Because you are my home 🏠",
+        "Because I love how annoying you are 😂",
+        "Because you are the most beautiful soul ❤️"
     ];
+    let reasonIndex = 0;
 
-    function showReason() {
-        const toast = document.getElementById('reason-toast');
-        const randomReason = reasons[Math.floor(Math.random() * reasons.length)];
-        toast.innerText = randomReason;
-        toast.classList.add('toast-active');
-        setTimeout(() => toast.classList.remove('toast-active'), 3000);
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+
+    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
+    const curveLines = Array.from({length: 40}, () => ({
+        yBase: Math.random() * canvas.height, amplitude: Math.random() * 50 + 20,
+        frequency: Math.random() * 0.003 + 0.001, speed: Math.random() * 0.01 + 0.005,
+        offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * colors.length)],
+        width: Math.random() * 3 + 2, opacity: 0.2
+    }));
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        curveLines.forEach(line => {
+            ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
+            ctx.moveTo(0, line.yBase);
+            for (let x = 0; x < canvas.width; x += 20) {
+                const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
+                ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        });
+        time += 1; requestAnimationFrame(animate);
+    }
+    animate();
+
+    const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
+    function typeLetter() {
+        const target = document.getElementById('typed-letter');
+        target.innerHTML = "";
+        let i = 0;
+        const timer = setInterval(() => {
+            if (i < letterText.length) {
+                target.innerHTML += letterText.charAt(i) === '\n' ? '<br>' : letterText.charAt(i);
+                i++;
+            } else { clearInterval(timer); }
+        }, 50);
     }
 
-    // ... (Keep the rest of your original Script functions) ...
+    function startQuiz() {
+        document.getElementById('instruction-page').classList.remove('active');
+        document.getElementById('q1').classList.add('active');
+    }
+
+    function next(btn, isCorrect) {
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(35); } 
+        else { btn.classList.add('shake'); }
+        setTimeout(() => {
+            document.getElementById(`q${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`q${currentStep}`).classList.add('active');
+        }, 600);
+    }
+
+    function checkScore(btn, isCorrect) {
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
+        else { btn.classList.add('shake'); }
+        setTimeout(() => {
+            document.getElementById(`q11`).classList.remove('active');
+            document.getElementById('result-page').classList.add('active');
+            const text = document.getElementById('result-text');
+            const giftBtn = document.getElementById('gift-btn');
+            if (score === 11) {
+                text.innerText = `Perfect Score! 11/11! ✨`;
+                giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
+            } else {
+                text.innerText = `You got ${score}/11. Try again! 🌸`;
+                giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
+            }
+        }, 600);
+    }
+
+    function createFireworks(count = 10) {
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
+            p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
+            const dX = (Math.random() - 0.5) * 500, dY = (Math.random() - 0.5) * 500;
+            p.animate([{ opacity: 1, transform: 'translate(0,0) scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0.2)` }], 1200).onfinish = () => p.remove();
+        }
+    }
+
+    // UPDATED showGift with Heart Hug Animation
+    function showGift() {
+        const hugOverlay = document.getElementById('hug-overlay');
+        hugOverlay.style.display = 'flex';
+        setTimeout(() => {
+            hugOverlay.style.display = 'none';
+            document.getElementById('result-page').classList.remove('active');
+            document.getElementById('gift-page').classList.add('active');
+        }, 2000);
+    }
+
+    function openView(viewId, isMusic = false) {
+        document.getElementById('gift-selection').style.display = 'none';
+        document.getElementById(viewId).style.display = 'block';
+        if(viewId === 'letter-view') typeLetter();
+        if(isMusic) music.play();
+    }
+
+    function backToGifts() {
+        music.pause(); music.currentTime = 0;
+        document.getElementById('letter-view').style.display = 'none';
+        document.getElementById('password-view').style.display = 'none';
+        document.getElementById('music-view').style.display = 'none';
+        document.getElementById('gift-selection').style.display = 'block';
+    }
+
+    // NEW FUNCTION: Reasons Why
+    function showNextReason() {
+        const toast = document.getElementById('reason-toast');
+        toast.innerText = reasons[reasonIndex];
+        reasonIndex = (reasonIndex + 1) % reasons.length;
+    }
 </script>
 </body>
 </html>
