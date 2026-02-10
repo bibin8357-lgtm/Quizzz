@@ -34,9 +34,11 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
-        /* Fixed Rainbow Box - No extra squares */
+        /* Rainbow Inside the Box */
         .container {
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95), rgba(255, 240, 245, 0.95));
+            background-size: 200% 200%;
+            animation: innerRainbow 8s ease infinite;
             padding: 2.5rem 2rem;
             border-radius: 30px;
             width: 90%;
@@ -45,23 +47,14 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(10px);
-            
-            /* Clean Rainbow Border */
             border: 4px solid white;
-            box-shadow: 0 0 20px rgba(255, 175, 204, 0.5),
-                        0 0 10px 5px rgba(189, 224, 254, 0.3),
-                        0 15px 35px rgba(0,0,0,0.1);
-            
-            /* Animated Rainbow Glow Effect around the edge */
-            animation: glowRotate 5s linear infinite;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 15px 35px rgba(0,0,0,0.1);
         }
 
-        @keyframes glowRotate {
-            0% { border-color: #ffafcc; box-shadow: 0 0 15px #ffafcc; }
-            25% { border-color: #bde0fe; box-shadow: 0 0 15px #bde0fe; }
-            50% { border-color: #b9fbc0; box-shadow: 0 0 15px #b9fbc0; }
-            75% { border-color: #fcf6bd; box-shadow: 0 0 15px #fcf6bd; }
-            100% { border-color: #ffafcc; box-shadow: 0 0 15px #ffafcc; }
+        @keyframes innerRainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
@@ -69,34 +62,38 @@
         .page { display: none; }
         .active { display: block; animation: fadeIn 0.5s ease; }
 
-        .instruction-list { text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem; }
-        .instruction-item { margin-bottom: 12px; }
-
-        .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
-
+        /* Rainbow Buttons */
         button {
             width: 100%;
             padding: 12px;
-            border: 2px solid var(--pink);
+            margin-bottom: 5px;
             background: white;
-            border-radius: 15px;
+            border: 3px solid transparent;
+            border-image: linear-gradient(45deg, #ffafcc, #bde0fe, #b9fbc0, #fcf6bd) 1;
+            border-radius: 15px; /* Note: border-image can square corners, so we use a trick below */
             cursor: pointer;
             transition: all 0.3s ease;
             color: var(--text-color);
             font-weight: bold;
             font-size: 0.95rem;
+            position: relative;
+            background-clip: padding-box;
+            border-radius: 15px;
+            border: 2px solid #ffafcc;
         }
 
-        button:hover { 
-            background: linear-gradient(90deg, #ffafcc, #bde0fe); 
-            color: white; 
-            transform: translateY(-2px); 
+        button:hover {
+            background: linear-gradient(45deg, #ffafcc, #bde0fe, #b9fbc0);
+            color: white;
+            transform: scale(1.02);
             border-color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
+        /* Specific styles for correctness */
         .shake {
             animation: shake 0.4s ease-in-out;
-            background-color: var(--wrong-red) !important;
+            background: var(--wrong-red) !important;
             color: white !important;
         }
 
@@ -145,10 +142,10 @@
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
         <p style="font-size: 0.9rem;">Follow the instruction:</p>
-        <div class="instruction-list">
-            <div class="instruction-item">✨ 1. Don’t Smile.</div>
-            <div class="instruction-item">✨ 2. Correct all the answers (11/11).</div>
-            <div class="instruction-item">✨ 3. Unlock your Passcode for your surprise</div>
+        <div style="text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem;">
+            <div style="margin-bottom: 12px;">✨ 1. Don’t Smile.</div>
+            <div style="margin-bottom: 12px;">✨ 2. Correct all the answers (11/11).</div>
+            <div style="margin-bottom: 12px;">✨ 3. Unlock your Passcode for your surprise</div>
         </div>
         <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
@@ -302,7 +299,6 @@
     const curveLines = [];
     const colors = ['#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db', '#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9'];
 
-    // Settings: 100 thick curves
     for(let i = 0; i < 100; i++) {
         curveLines.push({
             yBase: Math.random() * canvas.height,
@@ -344,7 +340,7 @@
     function next(btn, isCorrect) {
         if(isCorrect) {
             score++;
-            btn.style.backgroundColor = "#b9fbc0";
+            btn.style.background = "#b9fbc0";
             createFireworks();
         } else {
             btn.classList.add('shake');
@@ -357,7 +353,7 @@
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; }
+        if(isCorrect) { score++; btn.style.background = "#b9fbc0"; }
         else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
