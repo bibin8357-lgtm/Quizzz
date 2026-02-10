@@ -20,14 +20,23 @@
             width: 100%; height: 100%;
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
-            background-color: #fff0f3;
+            /* Rainbow Gradient Background Effect */
+            background: linear-gradient(120deg, #ffafcc, #bde0fe, #ffc8dd, #b9fbc0, #fcf6bd);
+            background-size: 400% 400%;
+            animation: rainbowBG 15s ease infinite;
             display: flex; justify-content: center; align-items: center;
+        }
+
+        @keyframes rainbowBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
         .container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.92);
             padding: 2rem;
             border-radius: 30px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
@@ -36,7 +45,7 @@
             text-align: center;
             position: relative;
             z-index: 10;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
             border: 2px solid #fff;
         }
 
@@ -276,17 +285,17 @@
         '#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9'
     ];
 
-    // Settings changed: 300 curves and thicker lines
-    for(let i = 0; i < 300; i++) {
+    // Settings: 100 curves with thickness
+    for(let i = 0; i < 100; i++) {
         curveLines.push({
             yBase: Math.random() * canvas.height,
-            amplitude: Math.random() * 50 + 15,
-            frequency: Math.random() * 0.005 + 0.001,
-            speed: Math.random() * 0.012 + 0.004,
+            amplitude: Math.random() * 60 + 20,
+            frequency: Math.random() * 0.004 + 0.001,
+            speed: Math.random() * 0.015 + 0.005,
             offset: Math.random() * 5000,
             color: colors[Math.floor(Math.random() * colors.length)],
-            width: Math.random() * 4 + 2, // Thicker lines (range 2px to 6px)
-            opacity: Math.random() * 0.15 + 0.05 // Slightly lower opacity for visual balance
+            width: Math.random() * 5 + 3, // Maintains thickness
+            opacity: Math.random() * 0.2 + 0.1
         });
     }
 
@@ -300,7 +309,7 @@
             ctx.lineWidth = line.width;
             
             ctx.moveTo(0, line.yBase);
-            for (let x = 0; x < canvas.width; x += 20) { 
+            for (let x = 0; x < canvas.width; x += 15) { 
                 const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
                 ctx.lineTo(x, y);
             }
