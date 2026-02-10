@@ -7,8 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --pink: #ffafcc;
-            --text-color: #5e548e;
+            --text-color: #4a4e69;
             --wrong-red: #ff8fa3;
             --right-green: #b9fbc0;
         }
@@ -34,11 +33,11 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
-        /* Rainbow Inside the Box */
+        /* Rainbow Box Background Animation */
         .container {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.95), rgba(255, 240, 245, 0.95));
-            background-size: 200% 200%;
-            animation: innerRainbow 8s ease infinite;
+            background: linear-gradient(45deg, #fff0f3, #e0f2fe, #f0fff4, #fff9db, #f3e8ff);
+            background-size: 300% 300%;
+            animation: rainbowShift 6s ease infinite;
             padding: 2.5rem 2rem;
             border-radius: 30px;
             width: 90%;
@@ -48,49 +47,43 @@
             z-index: 10;
             backdrop-filter: blur(10px);
             border: 4px solid white;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 15px 35px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
 
-        @keyframes innerRainbow {
+        /* Rainbow Buttons Animation */
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 2px solid white;
+            border-radius: 15px;
+            cursor: pointer;
+            color: var(--text-color);
+            font-weight: bold;
+            font-size: 0.95rem;
+            background: linear-gradient(90deg, #ffafcc, #bde0fe, #b9fbc0, #fcf6bd, #ffafcc);
+            background-size: 200% auto;
+            animation: rainbowShift 4s linear infinite;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        @keyframes rainbowShift {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
         h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
+        p { color: #444; font-weight: 500; }
 
         .page { display: none; }
         .active { display: block; animation: fadeIn 0.5s ease; }
 
-        /* Rainbow Buttons */
-        button {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 5px;
-            background: white;
-            border: 3px solid transparent;
-            border-image: linear-gradient(45deg, #ffafcc, #bde0fe, #b9fbc0, #fcf6bd) 1;
-            border-radius: 15px; /* Note: border-image can square corners, so we use a trick below */
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-color);
-            font-weight: bold;
-            font-size: 0.95rem;
-            position: relative;
-            background-clip: padding-box;
-            border-radius: 15px;
-            border: 2px solid #ffafcc;
-        }
-
-        button:hover {
-            background: linear-gradient(45deg, #ffafcc, #bde0fe, #b9fbc0);
-            color: white;
-            transform: scale(1.02);
-            border-color: white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        /* Specific styles for correctness */
         .shake {
             animation: shake 0.4s ease-in-out;
             background: var(--wrong-red) !important;
@@ -108,29 +101,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        #gift-box {
-            font-size: 80px;
-            cursor: pointer;
-            display: inline-block;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: wobble 2s infinite;
-        }
-
-        #gift-box:hover { transform: scale(1.2); }
-        #gift-box.open { animation: popOpen 0.5s forwards; }
-
-        @keyframes wobble {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(5deg); }
-            75% { transform: rotate(-5deg); }
-        }
-
-        @keyframes popOpen {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.4); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
+        #gift-box { font-size: 80px; cursor: pointer; animation: wobble 2s infinite; }
+        @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
+        
         .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 999; }
     </style>
 </head>
@@ -141,133 +114,26 @@
 <div class="container">
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
-        <p style="font-size: 0.9rem;">Follow the instruction:</p>
-        <div style="text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem;">
-            <div style="margin-bottom: 12px;">✨ 1. Don’t Smile.</div>
-            <div style="margin-bottom: 12px;">✨ 2. Correct all the answers (11/11).</div>
-            <div style="margin-bottom: 12px;">✨ 3. Unlock your Passcode for your surprise</div>
+        <p>Follow the instruction:</p>
+        <div style="text-align: left; margin-bottom: 20px; color: #555;">
+            <div>✨ 1. Don’t Smile.</div>
+            <div>✨ 2. Correct all the answers (11/11).</div>
+            <div>✨ 3. Unlock your Passcode</div>
         </div>
         <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
 
-    <div id="q1" class="page">
-        <h2>Question 1</h2>
-        <p>What am I to you?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">All of these</button>
-            <button onclick="next(this, false)">My comfort</button>
-            <button onclick="next(this, false)">Special person</button>
-            <button onclick="next(this, false)">Most fav person ever</button>
-        </div>
-    </div>
-
-    <div id="q2" class="page">
-        <h2>Question 2</h2>
-        <p>Which of our dates will always be your favourite?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">kadhal cafe</button>
-            <button onclick="next(this, true)">Tvm Cafee</button>
-            <button onclick="next(this, false)">Coocon</button>
-            <button onclick="next(this, false)">Ayushus</button>
-        </div>
-    </div>
-
-    <div id="q3" class="page">
-        <h2>Question 3</h2>
-        <p>Which outfits did I like you wearing the most?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Casual Outfits</button>
-            <button onclick="next(this, false)">Traditional Outfits</button>
-            <button onclick="next(this, true)">All of these (bzc its you)</button>
-            <button onclick="next(this, false)">The Hot Outfits</button>
-        </div>
-    </div>
-
-    <div id="q4" class="page">
-        <h2>Question 4</h2>
-        <p>Which day do you think I still remember clearly?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">Tvm Days</button>
-            <button onclick="next(this, false)">Kadhal Cafe</button>
-            <button onclick="next(this, false)">Coocon</button>
-            <button onclick="next(this, false)">Ayushus</button>
-        </div>
-    </div>
-
-    <div id="q5" class="page">
-        <h2>Question 5</h2>
-        <p>When I looked at you first day, what did I feel?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">Fully Nervous</button>
-            <button onclick="next(this, false)">Calm</button>
-            <button onclick="next(this, false)">Shy</button>
-            <button onclick="next(this, false)">Happyy</button>
-        </div>
-    </div>
-
-    <div id="q6" class="page">
-        <h2>Question 6</h2>
-        <p>What is my favorite Food?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Alfamm</button>
-            <button onclick="next(this, true)">Youhh</button>
-            <button onclick="next(this, false)">Mandhi</button>
-            <button onclick="next(this, false)">Momos and orange Juice</button>
-        </div>
-    </div>
-
-    <div id="q7" class="page">
-        <h2>Question 7</h2>
-        <p>Who is more annoying?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Me</button>
-            <button onclick="next(this, true)">Definitely You</button>
-            <button onclick="next(this, false)">Both of us</button>
-            <button onclick="next(this, false)">Neither</button>
-        </div>
-    </div>
-
-    <div id="q8" class="page">
-        <h2>Question 8</h2>
-        <p>What is my favorite thing about you?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Your Eyes</button>
-            <button onclick="next(this, false)">Your Smile</button>
-            <button onclick="next(this, true)">Everything!</button>
-            <button onclick="next(this, false)">Effortless Movement</button>
-        </div>
-    </div>
-
-    <div id="q9" class="page">
-        <h2>Question 9</h2>
-        <p>Which is my fav thing you says?</p>
-        <div class="options-grid">
-            <button onclick="next(this, false)">Bibinee</button>
-            <button onclick="next(this, true)">Entha Bibinneee</button>
-            <button onclick="next(this, false)">Babbyyy</button>
-            <button onclick="next(this, false)">Poddaaa</button>
-        </div>
-    </div>
-
-    <div id="q10" class="page">
-        <h2>Question 10</h2>
-        <p>Do you love me?</p>
-        <div class="options-grid">
-            <button onclick="next(this, true)">YESSS!</button>
-            <button onclick="next(this, false)">No</button>
-            <button onclick="next(this, false)">Maybe</button>
-            <button onclick="next(this, false)">I'll think about it</button>
-        </div>
-    </div>
-
-    <div id="q11" class="page">
-        <h2>Question 11</h2>
-        <p>Will you be my Valentine? </p>
-        <div class="options-grid">
-            <button onclick="checkScore(this, true)">YES!</button>
-            <button onclick="checkScore(this, false)">No way</button>
-        </div>
-    </div>
+    <div id="q1" class="page"><h2>Question 1</h2><p>What am I to you?</p><button onclick="next(this, true)">All of these</button><button onclick="next(this, false)">My comfort</button><button onclick="next(this, false)">Special person</button></div>
+    <div id="q2" class="page"><h2>Question 2</h2><p>Which date will be your favourite?</p><button onclick="next(this, true)">Tvm Cafee</button><button onclick="next(this, false)">Kadhal cafe</button><button onclick="next(this, false)">Coocon</button></div>
+    <div id="q3" class="page"><h2>Question 3</h2><p>Outfits I like you in?</p><button onclick="next(this, true)">All of these</button><button onclick="next(this, false)">Traditional</button></div>
+    <div id="q4" class="page"><h2>Question 4</h2><p>Day I remember clearly?</p><button onclick="next(this, true)">Tvm Days</button><button onclick="next(this, false)">Ayushus</button></div>
+    <div id="q5" class="page"><h2>Question 5</h2><p>First day feeling?</p><button onclick="next(this, true)">Fully Nervous</button><button onclick="next(this, false)">Calm</button></div>
+    <div id="q6" class="page"><h2>Question 6</h2><p>My favorite Food?</p><button onclick="next(this, true)">Youhh</button><button onclick="next(this, false)">Mandhi</button></div>
+    <div id="q7" class="page"><h2>Question 7</h2><p>Who is more annoying?</p><button onclick="next(this, true)">Definitely You</button><button onclick="next(this, false)">Me</button></div>
+    <div id="q8" class="page"><h2>Question 8</h2><p>Fav thing about you?</p><button onclick="next(this, true)">Everything!</button><button onclick="next(this, false)">Your Eyes</button></div>
+    <div id="q9" class="page"><h2>Question 9</h2><p>Fav thing you say?</p><button onclick="next(this, true)">Entha Bibinneee</button><button onclick="next(this, false)">Poddaaa</button></div>
+    <div id="q10" class="page"><h2>Question 10</h2><p>Do you love me?</p><button onclick="next(this, true)">YESSS!</button><button onclick="next(this, false)">No</button></div>
+    <div id="q11" class="page"><h2>Question 11</h2><p>Be my Valentine?</p><button onclick="checkScore(this, true)">YES!</button><button onclick="checkScore(this, false)">No</button></div>
 
     <div id="result-page" class="page">
         <h2>Results!</h2>
@@ -276,132 +142,76 @@
     </div>
 
     <div id="gift-page" class="page">
-        <h1>Happyy Valentines Dayy babbyyy 💌</h1>
+        <h1>Happyy Valentines Dayy! 💌</h1>
         <div id="gift-box" onclick="revealMessage()">🎁</div>
-        <p id="final-message" style="font-weight: bold; color: var(--text-color); margin-top: 20px;"></p>
+        <p id="final-message" style="margin-top: 20px;"></p>
     </div>
 </div>
 
 <script>
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
-    let currentStep = 1;
-    let score = 0;
-    let time = 0;
+    let currentStep = 1; let score = 0; let time = 0;
+    const colors = ['#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db'];
+    const lines = [];
 
-    function resize() { 
-        canvas.width = window.innerWidth; 
-        canvas.height = window.innerHeight; 
-    }
-    window.addEventListener('resize', resize);
-    resize();
+    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
 
-    const curveLines = [];
-    const colors = ['#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db', '#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9'];
-
-    for(let i = 0; i < 100; i++) {
-        curveLines.push({
-            yBase: Math.random() * canvas.height,
-            amplitude: Math.random() * 60 + 20,
-            frequency: Math.random() * 0.004 + 0.001,
-            speed: Math.random() * 0.015 + 0.005,
-            offset: Math.random() * 5000,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            width: Math.random() * 5 + 3,
-            opacity: Math.random() * 0.2 + 0.1
-        });
+    for(let i=0; i<100; i++) {
+        lines.push({y: Math.random()*canvas.height, a: Math.random()*60+20, f: Math.random()*0.004+0.001, s: Math.random()*0.015+0.005, o: Math.random()*5000, c: colors[i%5], w: Math.random()*5+3});
     }
 
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        curveLines.forEach(line => {
-            ctx.beginPath();
-            ctx.strokeStyle = line.color;
-            ctx.globalAlpha = line.opacity;
-            ctx.lineWidth = line.width;
-            ctx.moveTo(0, line.yBase);
-            for (let x = 0; x < canvas.width; x += 15) { 
-                const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
-                ctx.lineTo(x, y);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        lines.forEach(l => {
+            ctx.beginPath(); ctx.strokeStyle = l.c; ctx.lineWidth = l.w; ctx.globalAlpha = 0.2;
+            ctx.moveTo(0, l.y);
+            for(let x=0; x<canvas.width; x+=15) {
+                ctx.lineTo(x, l.y + Math.sin(x*l.f + (time*l.s) + l.o)*l.a);
             }
             ctx.stroke();
         });
-        ctx.globalAlpha = 1.0;
-        time += 1;
-        requestAnimationFrame(animate);
+        time++; requestAnimationFrame(animate);
     }
     animate();
 
-    function startQuiz() {
-        document.getElementById('instruction-page').classList.remove('active');
-        document.getElementById('q1').classList.add('active');
-    }
+    function startQuiz() { document.getElementById('instruction-page').classList.remove('active'); document.getElementById('q1').classList.add('active'); }
 
-    function next(btn, isCorrect) {
-        if(isCorrect) {
-            score++;
-            btn.style.background = "#b9fbc0";
-            createFireworks();
-        } else {
-            btn.classList.add('shake');
-        }
+    function next(btn, ok) {
+        if(ok) { score++; btn.style.background = "#b9fbc0"; createFireworks(); }
+        else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
             document.getElementById(`q${currentStep}`).classList.add('active');
-        }, 600);
+        }, 500);
     }
 
-    function checkScore(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.background = "#b9fbc0"; }
-        else { btn.classList.add('shake'); }
+    function checkScore(btn, ok) {
+        if(ok) score++;
         setTimeout(() => {
-            document.getElementById(`q11`).classList.remove('active');
+            document.getElementById('q11').classList.remove('active');
             document.getElementById('result-page').classList.add('active');
-            const text = document.getElementById('result-text');
-            const giftBtn = document.getElementById('gift-btn');
-            if (score === 11) {
-                text.innerText = `Perfect Score! 11/11! You really love me. ✨`;
-                giftBtn.style.display = 'block';
-                giftBtn.innerText = "Claim Your Gift";
-                giftBtn.onclick = showGift;
-            } else {
-                text.innerText = `You got ${score}/11. You must get EVERY answer correct to see the surprise! 🌸`;
-                giftBtn.style.display = 'block';
-                giftBtn.innerText = "Try Again 🔄";
-                giftBtn.onclick = () => location.reload();
-            }
-        }, 600);
+            const res = document.getElementById('result-text');
+            const g = document.getElementById('gift-btn');
+            if(score === 11) { res.innerText = "Perfect! 11/11 ✨"; g.style.display="block"; g.innerText="See My Surprise"; g.onclick=()=> {document.getElementById('result-page').classList.remove('active'); document.getElementById('gift-page').classList.add('active');}; }
+            else { res.innerText = "Try Again! Correct all 11 questions."; g.style.display="block"; g.innerText="Retry"; g.onclick=()=>location.reload(); }
+        }, 500);
     }
 
     function createFireworks() {
-        const colorsArr = ['#ffafcc', '#bde0fe', '#a2d2ff'];
-        for (let i = 0; i < 15; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.backgroundColor = colorsArr[Math.floor(Math.random() * colorsArr.length)];
-            p.style.left = '50%'; p.style.top = '50%';
-            document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 400;
-            const dY = (Math.random() - 0.5) * 400;
-            p.animate([{opacity: 1}, {transform: `translate(${dX}px, ${dY}px)`, opacity: 0}], 1000).onfinish = () => p.remove();
+        for(let i=0; i<15; i++) {
+            const p = document.createElement('div'); p.className='particle'; p.style.background=colors[i%5];
+            p.style.left='50%'; p.style.top='50%'; document.body.appendChild(p);
+            p.animate([{opacity:1}, {transform:`translate(${(Math.random()-0.5)*400}px, ${(Math.random()-0.5)*400}px)`, opacity:0}], 1000).onfinish=()=>p.remove();
         }
     }
 
-    function showGift() {
-        document.getElementById('result-page').classList.remove('active');
-        document.getElementById('gift-page').classList.add('active');
-    }
-
     function revealMessage() {
-        const box = document.getElementById('gift-box');
-        box.classList.add('open');
-        setTimeout(() => {
-            box.style.animation = "none";
-            box.innerHTML = "🥹🫶🏻😙";
-            document.getElementById('final-message').innerText = "You are the best thing that ever happened to me! And The password is Archanamadhu@7736";
-            createFireworks();
-        }, 300);
+        document.getElementById('gift-box').innerHTML = "🥹🫶🏻😙";
+        document.getElementById('final-message').innerText = "Passcode: Archanamadhu@7736";
+        createFireworks();
     }
 </script>
 </body>
