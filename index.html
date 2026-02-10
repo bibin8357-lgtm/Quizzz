@@ -81,7 +81,6 @@
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
-        /* --- UPDATED VALENTINE TITLE STYLE --- */
         .valentine-title { 
             font-family: 'Dancing Script', cursive; 
             font-size: 3rem; 
@@ -97,13 +96,12 @@
         @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
 
         .letter-view, .password-view, .music-view { display: none; text-align: left; }
-        .letter-paper { background: #fff; padding: 20px; border-radius: 15px; font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #444; margin-bottom: 20px;}
+        .letter-paper { background: #fff; padding: 20px; border-radius: 15px; font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #444; margin-bottom: 20px; min-height: 150px;}
 
-        /* --- UNIQUE MUSIC PAGE STYLE --- */
         .music-text {
             font-family: 'Montserrat', sans-serif;
             font-size: 1.2rem;
-            color: #8338ec; /* Deep Purple/Rose */
+            color: #8338ec;
             line-height: 1.6;
             letter-spacing: 0.5px;
             font-weight: 600;
@@ -126,6 +124,19 @@
         @keyframes slowShow { to { opacity: 1; } }
 
         .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 999; }
+        
+        /* Heart Trail style */
+        .heart-trail {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fly 1s linear forwards;
+        }
+        @keyframes fly {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(0, -50px) scale(1.5); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -182,22 +193,13 @@
                     You are the melody in my heart, Archana. <br>
                     I could listen to this forever with you. ✨
                 </p>
-                <div class="center-btn">
-                    <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
-                </div>
+                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
             </div>
         </div>
 
         <div id="letter-view" class="letter-view">
-            <div class="letter-paper">
-                My Dearest Archana,<br><br>
-                Thank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. <br><br>
-                Always yours, <br>
-                Bibin ❤️
-            </div>
-            <div class="center-btn">
-                <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
-            </div>
+            <div class="letter-paper" id="typed-letter"></div>
+            <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
         </div>
 
         <div id="password-view" class="password-view">
@@ -206,9 +208,7 @@
                 <h2 class="reveal-pass" style="color: #ff4d6d; background: white; padding: 10px; border-radius: 10px; border: 2px dashed #ffafcc; margin-bottom: 25px;">
                     Archanamadhu@7736
                 </h2>
-                <div class="center-btn">
-                    <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
-                </div>
+                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
             </div>
         </div>
     </div>
@@ -223,6 +223,7 @@
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
+    // Original Background Animation
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
     const curveLines = Array.from({length: 40}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 50 + 20,
@@ -245,6 +246,34 @@
         time += 1; requestAnimationFrame(animate);
     }
     animate();
+
+    // Heart Trail Effect
+    document.addEventListener('mousemove', (e) => spawnHeart(e.clientX, e.clientY));
+    document.addEventListener('touchstart', (e) => spawnHeart(e.touches[0].clientX, e.touches[0].clientY));
+
+    function spawnHeart(x, y) {
+        if(Math.random() > 0.1) return;
+        const h = document.createElement('div');
+        h.className = 'heart-trail';
+        h.innerHTML = '💖';
+        h.style.left = x + 'px'; h.style.top = y + 'px';
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 1000);
+    }
+
+    // Letter Typing Effect
+    const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
+    function typeLetter() {
+        const target = document.getElementById('typed-letter');
+        target.innerHTML = "";
+        let i = 0;
+        const timer = setInterval(() => {
+            if (i < letterText.length) {
+                target.innerHTML += letterText.charAt(i) === '\n' ? '<br>' : letterText.charAt(i);
+                i++;
+            } else { clearInterval(timer); }
+        }, 50);
+    }
 
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
@@ -297,6 +326,7 @@
     function openView(viewId, isMusic = false) {
         document.getElementById('gift-selection').style.display = 'none';
         document.getElementById(viewId).style.display = 'block';
+        if(viewId === 'letter-view') typeLetter();
         if(isMusic) music.play();
     }
 
