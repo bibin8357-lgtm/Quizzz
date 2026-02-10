@@ -20,7 +20,7 @@
             width: 100%; height: 100%;
             overflow: hidden;
             font-family: 'Poppins', sans-serif;
-            /* Rainbow Gradient Background Effect */
+            /* Main Rainbow Background */
             background: linear-gradient(120deg, #ffafcc, #bde0fe, #ffc8dd, #b9fbc0, #fcf6bd);
             background-size: 400% 400%;
             animation: rainbowBG 15s ease infinite;
@@ -35,18 +35,39 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
+        /* Rainbow Effect on the Quiz Box */
         .container {
-            background: rgba(255, 255, 255, 0.92);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 240, 245, 0.9));
             padding: 2rem;
             border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             width: 90%;
             max-width: 380px;
             text-align: center;
             position: relative;
             z-index: 10;
             backdrop-filter: blur(8px);
-            border: 2px solid #fff;
+            
+            /* Rainbow Border Effect */
+            border: 5px solid transparent;
+            border-image: linear-gradient(to bottom right, #ffafcc, #bde0fe, #b9fbc0, #fcf6bd, #e4c1f9) 1;
+            border-radius: 30px; /* Note: border-image can sometimes clip corners, so we use a pseudo-element for better look */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        /* Improved Rainbow Border for rounded corners */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: -5px; bottom: -5px; left: -5px; right: -5px;
+            background: linear-gradient(45deg, #ff99c8, #fcf6bd, #d0f4de, #a9def9, #e4c1f9);
+            z-index: -1;
+            border-radius: 35px;
+            animation: borderRotate 5s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
         }
 
         h1, h2 { font-family: 'Dancing Script', cursive; color: var(--text-color); margin: 0 0 15px 0; }
@@ -72,7 +93,12 @@
             font-size: 0.95rem;
         }
 
-        button:hover { background: var(--pink); color: white; transform: translateY(-2px); }
+        button:hover { 
+            background: linear-gradient(90deg, #ffafcc, #bde0fe); 
+            color: white; 
+            transform: translateY(-2px); 
+            border-color: white;
+        }
 
         .shake {
             animation: shake 0.4s ease-in-out;
@@ -280,12 +306,9 @@
     resize();
 
     const curveLines = [];
-    const colors = [
-        '#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db', 
-        '#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9'
-    ];
+    const colors = ['#ffafcc', '#bde0fe', '#a2d2ff', '#ffc8dd', '#cdb4db', '#ff99c8', '#fcf6bd', '#d0f4de', '#a9def9', '#e4c1f9'];
 
-    // Settings: 100 curves with thickness
+    // Settings: 100 thick curves
     for(let i = 0; i < 100; i++) {
         curveLines.push({
             yBase: Math.random() * canvas.height,
@@ -294,20 +317,18 @@
             speed: Math.random() * 0.015 + 0.005,
             offset: Math.random() * 5000,
             color: colors[Math.floor(Math.random() * colors.length)],
-            width: Math.random() * 5 + 3, // Maintains thickness
+            width: Math.random() * 5 + 3,
             opacity: Math.random() * 0.2 + 0.1
         });
     }
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
         curveLines.forEach(line => {
             ctx.beginPath();
             ctx.strokeStyle = line.color;
             ctx.globalAlpha = line.opacity;
             ctx.lineWidth = line.width;
-            
             ctx.moveTo(0, line.yBase);
             for (let x = 0; x < canvas.width; x += 15) { 
                 const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
@@ -315,7 +336,6 @@
             }
             ctx.stroke();
         });
-        
         ctx.globalAlpha = 1.0;
         time += 1;
         requestAnimationFrame(animate);
@@ -345,13 +365,11 @@
     function checkScore(btn, isCorrect) {
         if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; }
         else { btn.classList.add('shake'); }
-        
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
-            
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! You really love me. ✨`;
                 giftBtn.style.display = 'block';
@@ -388,7 +406,6 @@
     function revealMessage() {
         const box = document.getElementById('gift-box');
         box.classList.add('open');
-        
         setTimeout(() => {
             box.style.animation = "none";
             box.innerHTML = "🥹🫶🏻😙";
