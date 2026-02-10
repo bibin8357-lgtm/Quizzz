@@ -65,6 +65,7 @@
 
         button:hover { background: var(--pink); color: white; transform: translateY(-2px); }
 
+        /* Animations */
         .shake {
             animation: shake 0.4s ease-in-out;
             background-color: var(--wrong-red) !important;
@@ -82,6 +83,35 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Gift Box Animation */
+        #gift-box {
+            font-size: 80px;
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: wobble 2s infinite;
+        }
+
+        #gift-box:hover {
+            transform: scale(1.2);
+        }
+
+        #gift-box.open {
+            animation: popOpen 0.5s forwards;
+        }
+
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        @keyframes popOpen {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
         .particle { position: absolute; width: 6px; height: 6px; border-radius: 50%; pointer-events: none; z-index: 999; }
     </style>
 </head>
@@ -95,8 +125,8 @@
         <p style="font-size: 0.9rem;">Follow the instruction:</p>
         <div class="instruction-list">
             <div class="instruction-item">✨ 1. Don’t Smile.</div>
-            <div class="instruction-item">✨ 2. Correct Atleast 8.</div>
-            <div class="instruction-item">✨ 3. Unlock your Passcode for your   surprise</div>
+            <div class="instruction-item">✨ 2. Correct **EVERY** answer (11/11).</div>
+            <div class="instruction-item">✨ 3. Unlock your Passcode for your surprise</div>
         </div>
         <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
@@ -228,8 +258,8 @@
 
     <div id="gift-page" class="page">
         <h1>Happyy Valentines Dayy babbyyy 💌</h1>
-        <div id="gift-box" onclick="revealMessage()" style="font-size: 70px; cursor: pointer; margin: 10px 0;">🎁</div>
-        <p id="final-message" style="font-weight: bold; color: var(--text-color);"></p>
+        <div id="gift-box" onclick="revealMessage()">🎁</div>
+        <p id="final-message" style="font-weight: bold; color: var(--text-color); margin-top: 20px;"></p>
     </div>
 </div>
 
@@ -300,13 +330,14 @@
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
             
-            if (score >= 8) {
-                text.innerText = `You got ${score}/11 correct! You're amazing. ✨`;
+            // Logic: Must be 11/11 to get gift
+            if (score === 11) {
+                text.innerText = `Perfect Score! 11/11! You really love me. ✨`;
                 giftBtn.style.display = 'block';
                 giftBtn.innerText = "Claim Your Gift";
                 giftBtn.onclick = showGift;
             } else {
-                text.innerText = `You got ${score}/11. You need at least 8 correct to see your surprise! 🌸`;
+                text.innerText = `You got ${score}/11. You must get EVERY answer correct to see the surprise! 🌸`;
                 giftBtn.style.display = 'block';
                 giftBtn.innerText = "Try Again 🔄";
                 giftBtn.onclick = () => location.reload();
@@ -334,9 +365,15 @@
     }
 
     function revealMessage() {
-        document.getElementById('gift-box').innerHTML = "🥹🫶🏻😙";
-        document.getElementById('final-message').innerText = "You are the best thing that ever happened to me! And The password is Archanamadhu@7736";
-        createFireworks();
+        const box = document.getElementById('gift-box');
+        box.classList.add('open');
+        
+        setTimeout(() => {
+            box.style.animation = "none";
+            box.innerHTML = "🥹🫶🏻😙";
+            document.getElementById('final-message').innerText = "You are the best thing that ever happened to me! And The password is Archanamadhu@7736";
+            createFireworks();
+        }, 300);
     }
 </script>
 </body>
