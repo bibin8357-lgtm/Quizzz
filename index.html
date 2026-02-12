@@ -13,7 +13,7 @@
             --right-green: #b9fbc0;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
             margin: 0; padding: 0;
@@ -24,7 +24,6 @@
             background-size: 400% 400%;
             animation: rainbowBG 15s ease infinite;
             display: flex; justify-content: center; align-items: center;
-            cursor: crosshair;
         }
 
         @keyframes rainbowBG {
@@ -33,113 +32,113 @@
             100% { background-position: 0% 50%; }
         }
 
-        #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
+        #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
 
-        /* --- GLASSMORPHISM BOX --- */
+        /* --- MODERN RAINBOW BORDER CONTAINER --- */
         .container {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             padding: 2.5rem 2rem;
             border-radius: 35px;
-            width: 90%;
+            width: 92%;
             max-width: 400px;
             text-align: center;
             position: relative;
             z-index: 10;
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1), 
-                        inset 0 0 20px rgba(255, 255, 255, 0.5);
+            /* Animated Border */
+            border: 4px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
         }
 
-        h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.5rem; }
-        h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2rem; margin-bottom: 10px; }
+        .container::before {
+            content: ''; position: absolute; top: -4px; bottom: -4px; left: -4px; right: -4px;
+            background: linear-gradient(45deg, #ffafcc, #bde0fe, #fcf6bd, #b9fbc0);
+            z-index: -1; border-radius: 38px;
+            animation: borderRotate 3s linear infinite;
+        }
+        @keyframes borderRotate { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+
+        h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.6rem; }
+        h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2.1rem; margin-bottom: 10px; }
         p { font-weight: 700; color: var(--text-color); font-size: 1.1rem; margin-bottom: 20px; }
 
         .page { display: none; }
-        .active { display: block; animation: slideIn 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
+        .active { display: block; animation: smoothSlide 0.6s ease-out; }
 
-        @keyframes slideIn {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes smoothSlide {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
-        /* --- BUTTONS WITH SHINE & LIFT --- */
         button {
-            width: 100%; padding: 14px; border: 2px solid #ffccd5;
-            background: rgba(255, 255, 255, 0.9); border-radius: 20px;
-            cursor: pointer; transition: 0.4s; color: var(--text-color);
-            font-family: 'Quicksand', sans-serif; font-weight: 700;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            width: 100%; padding: 15px; border: 1.5px solid #ffccd5;
+            background: white; border-radius: 20px;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-color); font-family: 'Quicksand', sans-serif; font-weight: 700;
             position: relative; overflow: hidden;
-        }
-        
-        button::after {
-            content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%;
-            background: rgba(255, 255, 255, 0.6); transform: rotate(30deg); transition: 0.6s;
         }
 
         button:hover { 
-            background: linear-gradient(45deg, #ffafcc, #bde0fe); 
-            color: white; border-color: white; transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 175, 204, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 175, 204, 0.4);
+            border-color: var(--pink);
         }
-        button:hover::after { left: 120%; }
 
-        .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        /* Shine Effect */
+        button::after {
+            content: ''; position: absolute; top: -50%; left: -100%; width: 50%; height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            transform: rotate(20deg); transition: 0.5s;
+        }
+        button:hover::after { left: 150%; }
+
+        .shake { animation: shake 0.4s ease; background-color: var(--wrong-red) !important; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
         .valentine-title { 
-            font-family: 'Dancing Script', cursive; font-size: 2.8rem; font-weight: 700; color: #ff4d6d;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); animation: floatText 3s ease-in-out infinite; 
+            font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ff4d6d;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        @keyframes floatText { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
         
         .gift-container { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
-        .gift-item { font-size: 60px; cursor: pointer; transition: 0.3s; animation: wobble 2s infinite; }
-        .gift-item:hover { transform: scale(1.2) rotate(5deg); filter: drop-shadow(0 0 15px var(--pink)); }
-        @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
-
-        /* --- POLAROID & VIEWS --- */
-        .letter-view, .password-view, .music-view { display: none; text-align: left; }
-        .letter-paper { background: #fff; padding: 25px; border-radius: 15px; font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #444; margin-bottom: 20px; border: 1px solid #eee; line-height: 1.5; }
-
-        .polaroid-frame {
-            background: white; padding: 12px 12px 35px 12px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.1); transform: rotate(-2deg);
-            margin: 20px auto; width: fit-content; border: 1px solid #eee;
+        .gift-item { 
+            font-size: 55px; cursor: pointer; transition: 0.4s; 
+            animation: floating 2.5s infinite ease-in-out;
         }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .gift-item:hover { transform: scale(1.2) rotate(10deg); }
+
+        .letter-paper { background: #fff; padding: 25px; border-radius: 20px; font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #444; border: 1px solid #f9f9f9; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
 
         .music-text {
-            font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #8338ec; text-align: center;
-            background: linear-gradient(45deg, #ff4d6d, #8338ec); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600;
+            font-family: 'Montserrat', sans-serif; font-size: 1.2rem;
+            color: #8338ec; text-align: center; font-weight: 600;
+            line-height: 1.6;
         }
 
         .back-icon { 
-            font-size: 0.8rem; cursor: pointer; display: inline-block; margin-top: 15px; background: #ffc8dd; 
-            padding: 8px 20px; border-radius: 20px; color: white; font-weight: bold; transition: 0.3s;
+            font-size: 0.9rem; cursor: pointer; margin-top: 20px; background: var(--pink); 
+            padding: 10px 25px; border-radius: 50px; color: white; font-weight: bold; 
+            transition: 0.3s; display: inline-block;
         }
-        .back-icon:hover { background: #ffafcc; transform: translateY(-2px); }
 
-        .reveal-pass { opacity: 0; animation: slowShow 2s forwards; cursor: pointer; }
-        @keyframes slowShow { to { opacity: 1; } }
-
-        .sparkle { position: fixed; pointer-events: none; background: white; border-radius: 50%; z-index: 1000; }
-        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 999; }
-        
         #copy-toast {
-            position: fixed; bottom: 20%; left: 50%; transform: translateX(-50%);
-            background: var(--text-color); color: white; padding: 10px 20px;
-            border-radius: 20px; font-size: 0.8rem; opacity: 0; transition: 0.3s; z-index: 2000;
+            position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
+            background: #5e548e; color: white; padding: 12px 25px;
+            border-radius: 50px; font-size: 0.9rem; opacity: 0; transition: 0.5s; z-index: 9999;
         }
+
+        .particle { position: absolute; pointer-events: none; border-radius: 50%; z-index: 100; }
     </style>
 </head>
-<body onmousemove="createSparkle(event)">
+<body>
 
 <canvas id="lineCanvas"></canvas>
-<div id="copy-toast">Copied to your heart! ❤️</div>
+<div id="copy-toast">Passcode copied for you! ❤️</div>
 
 <div class="container">
     <audio id="bgMusic" loop><source src="music.mp3.mp3" type="audio/mpeg"></audio>
@@ -147,10 +146,10 @@
     <div id="instruction-page" class="page active">
         <h1>Hyy Archana Madhu! 🌸</h1>
         <p>Follow the instructions:</p>
-        <div style="text-align: left; margin: 20px 0; color: #777; font-size: 0.9rem;">
+        <div style="text-align: left; margin: 20px 0; color: #666; font-size: 0.95rem; line-height: 1.8;">
             <div>✨ 1. Don’t Smile.</div>
             <div>✨ 2. Correct all the answers (11/11).</div>
-            <div>✨ 3. Unlock your Passcode for your surprise</div>
+            <div>✨ 3. Unlock your Passcode for your surprise.</div>
         </div>
         <button onclick="startQuiz()">Babbee Are you Ready! ✨</button>
     </div>
@@ -184,32 +183,27 @@
             </div>
         </div>
 
-        <div id="music-view" class="music-view">
-            <div style="text-align: center; margin-top: 20px;">
-                <p class="music-text">
-                    Every note of this song reminds me of you. <br>
-                    You are the melody in my heart, Archana. ✨
-                </p>
-                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
-            </div>
+        <div id="music-view" class="page" style="text-align: center;">
+            <p class="music-text">
+                Every note of this song reminds me of you. <br>
+                You are the melody in my heart, Archana. <br>
+                I could listen to this forever with you. ✨
+            </p>
+            <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
         </div>
 
-        <div id="letter-view" class="letter-view">
+        <div id="letter-view" class="page">
             <div class="letter-paper" id="typed-letter"></div>
-            <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
+            <div style="text-align:center;"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
         </div>
 
-        <div id="password-view" class="password-view">
-            <div style="text-align: center;">
-                <p>The secret gift password is:</p>
-                <div class="polaroid-frame">
-                    <h2 class="reveal-pass" onclick="copyPass()" style="color: #ff4d6d; border: 2px dashed #ffafcc; padding: 10px; margin:0;">
-                        Archanamadhu@7736
-                    </h2>
-                </div>
-                <p style="font-size: 0.8rem; color: #999;">(Tap the photo to copy it! 📸)</p>
-                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
-            </div>
+        <div id="password-view" class="page" style="text-align: center;">
+            <p>The secret gift password is:</p>
+            <h2 onclick="copyPass()" style="color: #ff4d6d; background: white; padding: 15px; border-radius: 15px; border: 2.5px dashed #ffafcc; cursor: pointer;">
+                Archanamadhu@7736
+            </h2>
+            <p style="font-size: 0.8rem; color: #888;">(Tap the code to copy ✨)</p>
+            <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
         </div>
     </div>
 </div>
@@ -224,11 +218,11 @@
     window.addEventListener('resize', resize); resize();
 
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
-    const curveLines = Array.from({length: 40}, () => ({
-        yBase: Math.random() * canvas.height, amplitude: Math.random() * 50 + 20,
-        frequency: Math.random() * 0.003 + 0.001, speed: Math.random() * 0.01 + 0.005,
+    const curveLines = Array.from({length: 25}, () => ({
+        yBase: Math.random() * canvas.height, amplitude: Math.random() * 40 + 20,
+        frequency: Math.random() * 0.002 + 0.001, speed: Math.random() * 0.01 + 0.005,
         offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * colors.length)],
-        width: Math.random() * 3 + 2, opacity: 0.2
+        width: Math.random() * 2 + 1, opacity: 0.25
     }));
 
     function animate() {
@@ -236,7 +230,7 @@
         curveLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
             ctx.moveTo(0, line.yBase);
-            for (let x = 0; x < canvas.width; x += 20) {
+            for (let x = 0; x < canvas.width; x += 30) {
                 const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
                 ctx.lineTo(x, y);
             }
@@ -246,36 +240,14 @@
     }
     animate();
 
-    function createSparkle(e) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'sparkle';
-        const size = Math.random() * 5 + 2;
-        sparkle.style.width = size + 'px'; sparkle.style.height = size + 'px';
-        sparkle.style.left = e.clientX + 'px'; sparkle.style.top = e.clientY + 'px';
-        document.body.appendChild(sparkle);
-        sparkle.animate([{opacity: 1, transform: 'scale(1)'}, {opacity: 0, transform: 'scale(0) translateY(20px)'}], 1000).onfinish = () => sparkle.remove();
-    }
-
-    const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
-    function typeLetter() {
-        const target = document.getElementById('typed-letter');
-        target.innerHTML = ""; let i = 0;
-        const timer = setInterval(() => {
-            if (i < letterText.length) {
-                target.innerHTML += letterText.charAt(i) === '\n' ? '<br>' : letterText.charAt(i);
-                i++;
-            } else { clearInterval(timer); }
-        }, 50);
-    }
-
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
         document.getElementById('q1').classList.add('active');
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(35); } 
-        else { btn.classList.add('shake'); }
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(25); } 
+        else { btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'), 400); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++;
@@ -285,7 +257,6 @@
 
     function checkScore(btn, isCorrect) {
         if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
-        else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
@@ -301,43 +272,56 @@
         }, 600);
     }
 
-    function createFireworks(count = 10) {
-        for (let i = 0; i < count; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
-            p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 500, dY = (Math.random() - 0.5) * 500;
-            p.animate([{ opacity: 1, transform: 'translate(0,0) scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0.2)` }], 1200).onfinish = () => p.remove();
-        }
-    }
-
     function showGift() {
         document.getElementById('result-page').classList.remove('active');
         document.getElementById('gift-page').classList.add('active');
+        setTimeout(() => createFireworks(50), 300); // Celebration burst
+    }
+
+    function createFireworks(count) {
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle'; 
+            p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
+            p.style.width = (Math.random()*6+4) + 'px'; p.style.height = p.style.width;
+            p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
+            const dX = (Math.random() - 0.5) * 600, dY = (Math.random() - 0.5) * 600;
+            p.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${dX}px, ${dY}px) scale(0)`, opacity: 0 }], 1200).onfinish = () => p.remove();
+        }
+    }
+
+    const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
+    function typeLetter() {
+        const target = document.getElementById('typed-letter');
+        target.innerHTML = ""; let i = 0;
+        const timer = setInterval(() => {
+            if (i < letterText.length) {
+                target.innerHTML += letterText.charAt(i) === '\n' ? '<br>' : letterText.charAt(i);
+                i++;
+            } else { clearInterval(timer); }
+        }, 50);
     }
 
     function openView(viewId, isMusic = false) {
         document.getElementById('gift-selection').style.display = 'none';
-        document.getElementById(viewId).style.display = 'block';
+        document.getElementById(viewId).classList.add('active');
         if(viewId === 'letter-view') typeLetter();
         if(isMusic) music.play();
     }
 
     function backToGifts() {
         music.pause(); music.currentTime = 0;
-        document.getElementById('letter-view').style.display = 'none';
-        document.getElementById('password-view').style.display = 'none';
-        document.getElementById('music-view').style.display = 'none';
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('gift-page').classList.add('active');
         document.getElementById('gift-selection').style.display = 'block';
     }
 
     function copyPass() {
-        const pass = "Archanamadhu@7736";
-        navigator.clipboard.writeText(pass).then(() => {
+        navigator.clipboard.writeText("Archanamadhu@7736").then(() => {
             const toast = document.getElementById('copy-toast');
             toast.style.opacity = '1';
-            setTimeout(() => toast.style.opacity = '0', 2000);
             createFireworks(20);
+            setTimeout(() => toast.style.opacity = '0', 2000);
         });
     }
 </script>
