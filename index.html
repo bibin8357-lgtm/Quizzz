@@ -33,6 +33,7 @@
         }
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
+        #musicSymbolsCanvas { position: fixed; top: 0; left: 0; z-index: 2; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 0.5s; }
 
         .container {
             background: linear-gradient(-45deg, #ffffff, #fff0f3, #f0f7ff, #ffffff);
@@ -80,16 +81,8 @@
         }
 
         #noButton {
-            position: absolute;
-            width: 100%;
-            height: 52px;
-            left: 0;
-            bottom: 0;
-            transition: 0.05s linear; 
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.9) !important;
-            color: var(--text-color) !important;
-            border: 2px solid #ffccd5 !important;
+            position: absolute; width: 100%; height: 52px; left: 0; bottom: 0; transition: 0.05s linear; z-index: 100;
+            background: rgba(255, 255, 255, 0.9) !important; color: var(--text-color) !important; border: 2px solid #ffccd5 !important;
         }
 
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
@@ -115,6 +108,7 @@
 <body>
 
 <canvas id="lineCanvas"></canvas>
+<canvas id="musicSymbolsCanvas"></canvas>
 
 <div class="container">
     <audio id="bgMusic" loop><source src="music.mp3.mp3" type="audio/mpeg"></audio>
@@ -189,16 +183,20 @@
 <script>
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
+    const musicCanvas = document.getElementById('musicSymbolsCanvas');
+    const mctx = musicCanvas.getContext('2d');
     let currentStep = 1; let score = 0; let time = 0;
     
-    // 1. EXTENDED VIBRANT COLOR PALETTE
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec', '#00f2ff', '#ffea00', '#b9fbc0', '#ff70a6', '#70d6ff', '#fb6f92'];
     const music = document.getElementById('bgMusic');
 
-    function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    function resize() { 
+        canvas.width = musicCanvas.width = window.innerWidth; 
+        canvas.height = musicCanvas.height = window.innerHeight; 
+    }
     window.addEventListener('resize', resize); resize();
     
-    // 2. INCREASED CURVED LINES COUNT
+    // Background Lines
     const curveLines = Array.from({length: 60}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 60 + 20,
         frequency: Math.random() * 0.004 + 0.001, speed: Math.random() * 0.015 + 0.005,
@@ -206,20 +204,29 @@
         width: Math.random() * 2 + 1, opacity: 0.3
     }));
 
-    // 3. NEW STRAIGHT LINES SYSTEM
     const straightLines = Array.from({length: 25}, () => ({
-        y: Math.random() * canvas.height,
+        y: Math.random() * canvas.height, speed: Math.random() * 2 + 1,
+        width: Math.random() * 1.5 + 0.5, color: colors[Math.floor(Math.random() * colors.length)],
+        length: Math.random() * 200 + 50, x: Math.random() * canvas.width
+    }));
+
+    // Music Symbols System
+    const notes = ['♪', '♫', '♬', '♩', '∮', '♭'];
+    const musicalParticles = Array.from({length: 40}, () => ({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight + window.innerHeight,
+        text: notes[Math.floor(Math.random() * notes.length)],
+        size: Math.random() * 20 + 20,
         speed: Math.random() * 2 + 1,
-        width: Math.random() * 1.5 + 0.5,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        length: Math.random() * 200 + 50,
-        x: Math.random() * canvas.width
+        opacity: Math.random() * 0.5 + 0.5,
+        drift: Math.random() * 2 - 1
     }));
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        mctx.clearRect(0, 0, musicCanvas.width, musicCanvas.height);
         
-        // Draw Curves
+        // Curves
         curveLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
             ctx.moveTo(0, line.yBase);
@@ -230,18 +237,24 @@
             ctx.stroke();
         });
 
-        // Draw Moving Straight Lines
+        // Straight Lines
         straightLines.forEach(line => {
-            ctx.beginPath();
-            ctx.strokeStyle = line.color;
-            ctx.globalAlpha = 0.4;
-            ctx.lineWidth = line.width;
-            ctx.moveTo(line.x, line.y);
-            ctx.lineTo(line.x + line.length, line.y);
-            ctx.stroke();
-            
-            line.x += line.speed;
-            if (line.x > canvas.width) line.x = -line.length;
+            ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = 0.4; ctx.lineWidth = line.width;
+            ctx.moveTo(line.x, line.y); ctx.lineTo(line.x + line.length, line.y); ctx.stroke();
+            line.x += line.speed; if (line.x > canvas.width) line.x = -line.length;
+        });
+
+        // Music Notes
+        musicalParticles.forEach(p => {
+            mctx.font = `${p.size}px Arial`;
+            mctx.fillStyle = `rgba(131, 56, 236, ${p.opacity})`;
+            mctx.fillText(p.text, p.x, p.y);
+            p.y -= p.speed;
+            p.x += Math.sin(time * 0.05) * p.drift;
+            if (p.y < -50) {
+                p.y = musicCanvas.height + 50;
+                p.x = Math.random() * musicCanvas.width;
+            }
         });
 
         time += 1; requestAnimationFrame(animate);
@@ -254,16 +267,11 @@
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { 
-            score++; 
-            btn.style.backgroundColor = "#b9fbc0"; 
-            createSparkles(35); 
-        } 
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createSparkles(35); } 
         else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
-            currentStep++;
-            document.getElementById(`q${currentStep}`).classList.add('active');
+            currentStep++; document.getElementById(`q${currentStep}`).classList.add('active');
         }, 600);
     }
 
@@ -275,21 +283,14 @@
         let newX, newY;
         const currentX = parseFloat(btn.style.left) || 0;
         const currentY = parseFloat(btn.style.top) || 0;
-        do {
-            newX = Math.random() * maxX;
-            newY = Math.random() * maxY;
+        do { newX = Math.random() * maxX; newY = Math.random() * maxY;
         } while (Math.abs(newX - currentX) < 100 && Math.abs(newY - currentY) < 100);
-        btn.style.left = newX + "px";
-        btn.style.top = newY + "px";
+        btn.style.left = newX + "px"; btn.style.top = newY + "px";
     }
 
     function finalYes(btn) {
-        score++;
-        btn.style.backgroundColor = "#b9fbc0";
-        const effectInterval = setInterval(() => {
-            createMegaSpark(30);
-            createCrackers(20);
-        }, 100);
+        score++; btn.style.backgroundColor = "#b9fbc0";
+        const effectInterval = setInterval(() => { createMegaSpark(30); createCrackers(20); }, 100);
         setTimeout(() => {
             clearInterval(effectInterval);
             document.getElementById(`q11`).classList.remove('active');
@@ -301,10 +302,8 @@
     function createSparkles(count) {
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
-            p.className = 'particle'; 
-            p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            p.style.width = (Math.random() * 6 + 10) + 'px'; 
-            p.style.height = p.style.width;
+            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            p.style.width = (Math.random() * 6 + 10) + 'px'; p.style.height = p.style.width;
             p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
             const dX = (Math.random() - 0.5) * 700, dY = (Math.random() - 0.5) * 700;
             p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove();
@@ -317,68 +316,4 @@
             p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             p.style.width = (Math.random() * 14 + 5) + 'px'; p.style.height = p.style.width;
             p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
-            document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 1500, dY = (Math.random() - 0.5) * 1500;
-            p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove();
-        }
-    }
-
-    function createCrackers(count) {
-        for (let i = 0; i < count; i++) {
-            const c = document.createElement('div');
-            c.className = 'cracker';
-            c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            c.style.left = Math.random() * 100 + '%';
-            c.style.top = Math.random() * 100 + '%';
-            document.body.appendChild(c);
-            const angle = Math.random() * Math.PI * 2;
-            const dist = Math.random() * 1000 + 300;
-            const dX = Math.cos(angle) * dist;
-            const dY = Math.sin(angle) * dist;
-            c.animate([
-                { transform: `rotate(${angle}rad) translate(0,0) scaleY(1.5)`, opacity: 1 },
-                { transform: `rotate(${angle}rad) translate(${dX}px, ${dY}px) scaleY(0)`, opacity: 0 }
-            ], { duration: 900, easing: 'ease-out' }).onfinish = () => c.remove();
-        }
-    }
-
-    function showResult() {
-        const text = document.getElementById('result-text');
-        const giftBtn = document.getElementById('gift-btn');
-        if (score === 11) {
-            text.innerText = "Perfect Score 11/11! Archana, you're amazing! ❤️";
-            giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Gifts"; giftBtn.onclick = () => {
-                document.getElementById('result-page').classList.remove('active');
-                document.getElementById('gift-page').classList.add('active');
-            };
-        } else {
-            text.innerText = `Babbyy, you need 11/11 to see the surprise! Try again!`;
-            giftBtn.style.display = 'block'; giftBtn.innerText = "Restart 🔄"; giftBtn.onclick = () => location.reload();
-        }
-    }
-
-    function openView(id, m) {
-        document.getElementById('gift-selection').style.display = 'none';
-        document.getElementById(id).style.display = 'block';
-        if(id === 'letter-view') typeL();
-        if(m) music.play();
-    }
-
-    function backToGifts() {
-        music.pause(); music.currentTime = 0;
-        document.getElementById('letter-view').style.display = 'none';
-        document.getElementById('password-view').style.display = 'none';
-        document.getElementById('music-view').style.display = 'none';
-        document.getElementById('gift-selection').style.display = 'block';
-    }
-
-    function typeL() {
-        const t = "My Dearest Archana,\n\nI am so lucky to have you. You make everything better. Happy Valentine's Day! \n\nForever yours,\nBibin ❤️";
-        const el = document.getElementById('typed-letter'); el.innerHTML = "";
-        let i = 0; const int = setInterval(() => {
-            if(i < t.length) { el.innerHTML += t[i] === '\n' ? '<br>' : t[i]; i++; } else clearInterval(int);
-        }, 50);
-    }
-</script>
-</body>
-</html>
+            document.body.appendChild(p
