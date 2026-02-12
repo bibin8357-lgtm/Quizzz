@@ -34,7 +34,6 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
-        /* --- UPDATED RAINBOW QUIZ BOX --- */
         .container {
             background: linear-gradient(-45deg, #ffffff, #fff0f3, #f0f7ff, #ffffff);
             background-size: 300% 300%;
@@ -47,13 +46,7 @@
             position: relative;
             z-index: 10;
             backdrop-filter: blur(15px);
-            /* This creates the Rainbow Border effect */
-            border: 5px solid transparent;
-            border-image: linear-gradient(45deg, #ffafcc, #bde0fe, #ffc8dd, #b9fbc0, #fcf6bd) 1;
-            border-radius: 30px; /* Note: border-image can sometimes break border-radius in some browsers, using box-shadow as fallback */
-            box-shadow: 0 0 20px rgba(255, 175, 204, 0.5), 0 20px 50px rgba(0,0,0,0.1);
-            background-clip: padding-box;
-            border: 4px solid white; /* Keeping the clean white edge but adding a rainbow glow below */
+            border: 4px solid white; 
             box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6), 
                         0 0 20px 2px #ffafcc, 
                         0 0 25px 5px #bde0fe;
@@ -77,7 +70,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; position: relative; }
 
         button {
             width: 100%; padding: 14px; border: 2px solid #ffccd5;
@@ -89,6 +82,12 @@
         button:hover { 
             background: linear-gradient(45deg, #ffafcc, #bde0fe); 
             color: white; border-color: white; transform: scale(1.03); 
+        }
+
+        /* Movement style for the No button */
+        #noButton {
+            transition: all 0.2s ease;
+            z-index: 100;
         }
 
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
@@ -167,7 +166,14 @@
     <div id="q8" class="page"><h2>Question 8</h2><p>What is my favorite thing about you?</p><div class="options-grid"><button onclick="next(this, false)">Your Eyes</button><button onclick="next(this, false)">Your Smile</button><button onclick="next(this, true)">Everything!</button><button onclick="next(this, false)">Effortless Movement</button></div></div>
     <div id="q9" class="page"><h2>Question 9</h2><p>Which is my fav thing you says?</p><div class="options-grid"><button onclick="next(this, false)">Bibinee</button><button onclick="next(this, true)">Entha Bibinneee</button><button onclick="next(this, false)">Babbyyy</button><button onclick="next(this, false)">Poddaaa</button></div></div>
     <div id="q10" class="page"><h2>Question 10</h2><p>Do you love me?</p><div class="options-grid"><button onclick="next(this, true)">YESSS!</button><button onclick="next(this, false)">No</button><button onclick="next(this, false)">Maybe</button><button onclick="next(this, false)">I'll think about it</button></div></div>
-    <div id="q11" class="page"><h2>Question 11</h2><p>Will you be my Valentine? </p><div class="options-grid"><button onclick="checkScore(this, true)">YES!</button><button onclick="checkScore(this, false)">No way</button></div></div>
+    <div id="q11" class="page">
+        <h2>Question 11</h2>
+        <p>Will you be my Valentine? </p>
+        <div class="options-grid">
+            <button onclick="checkScore(this, true)">YES!</button>
+            <button id="noButton" onmouseover="moveNoButton()" onclick="moveNoButton()">No way</button>
+        </div>
+    </div>
 
     <div id="result-page" class="page">
         <h2>Results!</h2>
@@ -272,6 +278,17 @@
             currentStep++;
             document.getElementById(`q${currentStep}`).classList.add('active');
         }, 600);
+    }
+
+    // Function to make the NO button move
+    function moveNoButton() {
+        const noBtn = document.getElementById('noButton');
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = Math.max(10, Math.min(x, window.innerWidth - 100)) + 'px';
+        noBtn.style.top = Math.max(10, Math.min(y, window.innerHeight - 50)) + 'px';
     }
 
     function checkScore(btn, isCorrect) {
