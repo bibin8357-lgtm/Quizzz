@@ -34,9 +34,27 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
 
-        /* --- MODERN RAINBOW BORDER CONTAINER --- */
+        /* --- FLOATING TEXT STYLE --- */
+        .floating-love {
+            position: fixed;
+            bottom: -50px;
+            font-family: 'Dancing Script', cursive;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 2; /* Sits behind container (z-index 10) */
+            opacity: 0.6;
+            white-space: nowrap;
+            animation: floatUp linear forwards;
+        }
+
+        @keyframes floatUp {
+            from { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            to { transform: translateY(-110vh) rotate(15deg); opacity: 0; }
+        }
+
+        /* --- THE GLOWING CONTAINER --- */
         .container {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             padding: 2.5rem 2rem;
@@ -46,19 +64,15 @@
             text-align: center;
             position: relative;
             z-index: 10;
-            /* Animated Border */
-            border: 4px solid transparent;
-            background-clip: padding-box;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 175, 204, 0.6);
+            animation: breatheGlow 4s ease-in-out infinite;
         }
 
-        .container::before {
-            content: ''; position: absolute; top: -4px; bottom: -4px; left: -4px; right: -4px;
-            background: linear-gradient(45deg, #ffafcc, #bde0fe, #fcf6bd, #b9fbc0);
-            z-index: -1; border-radius: 38px;
-            animation: borderRotate 3s linear infinite;
+        @keyframes breatheGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 175, 204, 0.6); }
+            50% { box-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 70px rgba(189, 224, 254, 0.8); transform: scale(1.01); }
         }
-        @keyframes borderRotate { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
 
         h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.6rem; }
         h2 { font-family: 'Dancing Script', cursive; color: #ff4d6d; font-size: 2.1rem; margin-bottom: 10px; }
@@ -68,31 +82,26 @@
         .active { display: block; animation: smoothSlide 0.6s ease-out; }
 
         @keyframes smoothSlide {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
         button {
-            width: 100%; padding: 15px; border: 1.5px solid #ffccd5;
-            background: white; border-radius: 20px;
-            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%; padding: 15px; border: 1px solid rgba(255, 175, 204, 0.3);
+            background: rgba(255, 255, 255, 0.6); border-radius: 18px;
+            cursor: pointer; transition: 0.3s;
             color: var(--text-color); font-family: 'Quicksand', sans-serif; font-weight: 700;
             position: relative; overflow: hidden;
         }
 
-        button:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 175, 204, 0.4);
-            border-color: var(--pink);
-        }
+        button:hover { background: white; transform: translateY(-3px); box-shadow: 0 8px 15px rgba(255, 175, 204, 0.3); border-color: var(--pink); }
 
-        /* Shine Effect */
         button::after {
             content: ''; position: absolute; top: -50%; left: -100%; width: 50%; height: 200%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-            transform: rotate(20deg); transition: 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            transform: rotate(25deg); transition: 0.5s;
         }
         button:hover::after { left: 150%; }
 
@@ -100,45 +109,34 @@
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
         .valentine-title { 
-            font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ff4d6d;
-            text-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-family: 'Dancing Script', cursive; font-size: 3rem; 
+            background: linear-gradient(to right, #ff4d6d, #8338ec, #ff4d6d);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shineText 3s linear infinite;
         }
+        @keyframes shineText { to { background-position: 200% center; } }
         
         .gift-container { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
-        .gift-item { 
-            font-size: 55px; cursor: pointer; transition: 0.4s; 
-            animation: floating 2.5s infinite ease-in-out;
-        }
-        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .gift-item:hover { transform: scale(1.2) rotate(10deg); }
+        .gift-item { font-size: 55px; cursor: pointer; transition: 0.4s; animation: floatIcon 2.5s infinite ease-in-out; }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .gift-item:hover { transform: scale(1.2) rotate(8deg); }
 
-        .letter-paper { background: #fff; padding: 25px; border-radius: 20px; font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #444; border: 1px solid #f9f9f9; box-shadow: 0 10px 20px rgba(0,0,0,0.02); }
+        .letter-paper { background: #fff; padding: 25px; border-radius: 20px; font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: #444; box-shadow: inset 0 0 15px rgba(0,0,0,0.02); line-height: 1.4; }
 
-        .music-text {
-            font-family: 'Montserrat', sans-serif; font-size: 1.2rem;
-            color: #8338ec; text-align: center; font-weight: 600;
-            line-height: 1.6;
-        }
+        .music-text { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #8338ec; text-align: center; font-weight: 600; line-height: 1.6; }
 
-        .back-icon { 
-            font-size: 0.9rem; cursor: pointer; margin-top: 20px; background: var(--pink); 
-            padding: 10px 25px; border-radius: 50px; color: white; font-weight: bold; 
-            transition: 0.3s; display: inline-block;
-        }
-
-        #copy-toast {
-            position: fixed; top: 10%; left: 50%; transform: translateX(-50%);
-            background: #5e548e; color: white; padding: 12px 25px;
-            border-radius: 50px; font-size: 0.9rem; opacity: 0; transition: 0.5s; z-index: 9999;
-        }
-
+        .back-icon { font-size: 0.9rem; cursor: pointer; margin-top: 20px; background: var(--pink); padding: 10px 25px; border-radius: 50px; color: white; font-weight: bold; transition: 0.3s; display: inline-block; }
+        
+        #copy-toast { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); background: #5e548e; color: white; padding: 12px 25px; border-radius: 50px; font-size: 0.9rem; opacity: 0; transition: 0.5s; z-index: 9999; }
         .particle { position: absolute; pointer-events: none; border-radius: 50%; z-index: 100; }
     </style>
 </head>
 <body>
 
 <canvas id="lineCanvas"></canvas>
-<div id="copy-toast">Passcode copied for you! ❤️</div>
+<div id="copy-toast">Passcode copied! ❤️</div>
 
 <div class="container">
     <audio id="bgMusic" loop><source src="music.mp3.mp3" type="audio/mpeg"></audio>
@@ -213,15 +211,15 @@
     const ctx = canvas.getContext('2d');
     let currentStep = 1; let score = 0; let time = 0;
     const music = document.getElementById('bgMusic');
+    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#8338ec'];
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
-    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
-    const curveLines = Array.from({length: 25}, () => ({
+    const curveLines = Array.from({length: 22}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 40 + 20,
         frequency: Math.random() * 0.002 + 0.001, speed: Math.random() * 0.01 + 0.005,
-        offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * colors.length)],
+        offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * 4)],
         width: Math.random() * 2 + 1, opacity: 0.25
     }));
 
@@ -230,7 +228,7 @@
         curveLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
             ctx.moveTo(0, line.yBase);
-            for (let x = 0; x < canvas.width; x += 30) {
+            for (let x = 0; x < canvas.width; x += 35) {
                 const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
                 ctx.lineTo(x, y);
             }
@@ -240,13 +238,27 @@
     }
     animate();
 
+    /* --- NEW: FLOATING LOVE TEXT GENERATOR --- */
+    function createFloatingText() {
+        const text = document.createElement('div');
+        text.className = 'floating-love';
+        text.innerText = "i love you archannee";
+        text.style.left = Math.random() * 80 + 10 + "%";
+        text.style.color = colors[Math.floor(Math.random() * colors.length)];
+        text.style.fontSize = (Math.random() * 1 + 1) + "rem";
+        text.style.animationDuration = (Math.random() * 5 + 5) + "s";
+        document.body.appendChild(text);
+        setTimeout(() => text.remove(), 10000);
+    }
+    setInterval(createFloatingText, 800); // Spawns text every 0.8 seconds
+
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
         document.getElementById('q1').classList.add('active');
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(25); } 
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(20); } 
         else { btn.classList.add('shake'); setTimeout(()=>btn.classList.remove('shake'), 400); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
@@ -256,7 +268,7 @@
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(30); }
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
@@ -275,7 +287,7 @@
     function showGift() {
         document.getElementById('result-page').classList.remove('active');
         document.getElementById('gift-page').classList.add('active');
-        setTimeout(() => createFireworks(50), 300); // Celebration burst
+        createFireworks(50);
     }
 
     function createFireworks(count) {
