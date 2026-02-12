@@ -107,7 +107,7 @@
     <div id="result-page" class="page">
         <h2>Results!</h2>
         <p id="result-text"></p>
-        <button id="gift-btn"></button>
+        <button id="restart-btn" style="display:none;" onclick="window.location.reload()">Restart 🔄</button>
     </div>
 
     <div id="gift-page" class="page">
@@ -128,6 +128,7 @@
 
 <script>
     let currentStep = 1; let score = 0; let time = 0;
+    // MEMORY FETCHING
     let grandTotalWrong = parseInt(localStorage.getItem('bibin_wrong_memory')) || 0;
 
     function startQuiz() { document.getElementById('instruction-page').classList.remove('active'); document.getElementById('q1').classList.add('active'); }
@@ -137,7 +138,7 @@
         else { 
             btn.classList.add('shake'); 
             grandTotalWrong++; 
-            localStorage.setItem('bibin_wrong_memory', grandTotalWrong);
+            localStorage.setItem('bibin_wrong_memory', grandTotalWrong); // Update Memory
         }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
@@ -155,22 +156,17 @@
 
     function finalYes(btn) {
         score++;
-        // SUCCESS PATH
+        document.getElementById(`q20`).classList.remove('active');
+        
         if(score === 20) {
-            setTimeout(() => {
-                document.getElementById(`q20`).classList.remove('active');
-                document.getElementById('penalty-page').classList.add('active');
-                document.getElementById('penalty-stats').innerHTML = `You made <b>${grandTotalWrong}</b> mistakes across all attempts.<br>Total Photos Owed: <b>${grandTotalWrong * 2}</b>`;
-            }, 1000);
+            // ONLY SHOW PENALTY + PASSCODE IF PERFECT SCORE
+            document.getElementById('penalty-page').classList.add('active');
+            document.getElementById('penalty-stats').innerHTML = `You made <b>${grandTotalWrong}</b> mistakes across all attempts.<br>Total Photos Owed: <b>${grandTotalWrong * 2}</b>`;
         } else {
-            // FAILURE PATH
-            setTimeout(() => {
-                document.getElementById(`q20`).classList.remove('active');
-                document.getElementById('result-page').classList.add('active');
-                document.getElementById('result-text').innerText = `You only got ${score}/20. Correct them all to see the surprise!`;
-                const btn = document.getElementById('gift-btn');
-                btn.innerText = "Restart 🔄"; btn.onclick = () => window.location.reload();
-            }, 1000);
+            // SHOW RESTART BUTTON IF FAILED
+            document.getElementById('result-page').classList.add('active');
+            document.getElementById('result-text').innerText = `Babbyy, you need 20/20! You only got ${score}/20.`;
+            document.getElementById('restart-btn').style.display = 'block';
         }
     }
 
@@ -186,17 +182,13 @@
         } else { document.getElementById('pass-error').style.display = "block"; }
     }
 
-    // Animation & Gifts logic (Identical to previous versions for consistency)
+    // Animation & Music
     const canvas = document.getElementById('lineCanvas'); const ctx = canvas.getContext('2d');
     const musicCanvas = document.getElementById('musicSymbolsCanvas'); const mctx = musicCanvas.getContext('2d');
-    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#8338ec', '#b9fbc0'];
     const music = document.getElementById('bgMusic');
     function resize() { canvas.width = musicCanvas.width = window.innerWidth; canvas.height = musicCanvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        time += 1; requestAnimationFrame(animate);
-    } animate();
+    function animate() { time += 1; requestAnimationFrame(animate); } animate();
     function openView(id, m) { document.getElementById('gift-selection').style.display = 'none'; document.getElementById(id).style.display = 'block'; if(id === 'letter-view') typeL(); if(m) { music.play(); musicCanvas.style.opacity = "1"; } }
     function backToGifts() { music.pause(); document.getElementById('letter-view').style.display = 'none'; document.getElementById('password-view').style.display = 'none'; document.getElementById('music-view').style.display = 'none'; document.getElementById('gift-selection').style.display = 'block'; }
     function typeL() { const t = "My Dearest Archana,\n\nI am so lucky to have you. You make everything better. Happy Valentine's Day! \n\nForever yours,\nBibin ❤️"; const el = document.getElementById('typed-letter'); el.innerHTML = ""; let i = 0; const int = setInterval(() => { if(i < t.length) { el.innerHTML += t[i] === '\n' ? '<br>' : t[i]; i++; } else clearInterval(int); }, 50); }
