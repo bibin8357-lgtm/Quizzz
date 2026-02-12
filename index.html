@@ -316,4 +316,65 @@
             p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             p.style.width = (Math.random() * 14 + 5) + 'px'; p.style.height = p.style.width;
             p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
-            document.body.appendChild(p
+            document.body.appendChild(p);
+            const dX = (Math.random() - 0.5) * 1500, dY = (Math.random() - 0.5) * 1500;
+            p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove();
+        }
+    }
+
+    function createCrackers(count) {
+        for (let i = 0; i < count; i++) {
+            const c = document.createElement('div');
+            c.className = 'cracker'; c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            c.style.left = Math.random() * 100 + '%'; c.style.top = Math.random() * 100 + '%';
+            document.body.appendChild(c);
+            const angle = Math.random() * Math.PI * 2; const dist = Math.random() * 1000 + 300;
+            const dX = Math.cos(angle) * dist; const dY = Math.sin(angle) * dist;
+            c.animate([{ transform: `rotate(${angle}rad) translate(0,0) scaleY(1.5)`, opacity: 1 }, { transform: `rotate(${angle}rad) translate(${dX}px, ${dY}px) scaleY(0)`, opacity: 0 }], { duration: 900, easing: 'ease-out' }).onfinish = () => c.remove();
+        }
+    }
+
+    function showResult() {
+        const text = document.getElementById('result-text');
+        const giftBtn = document.getElementById('gift-btn');
+        if (score === 11) {
+            text.innerText = "Perfect Score 11/11! Archana, you're amazing! ❤️";
+            giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Gifts"; giftBtn.onclick = () => {
+                document.getElementById('result-page').classList.remove('active');
+                document.getElementById('gift-page').classList.add('active');
+            };
+        } else {
+            text.innerText = `Babbyy, you need 11/11 to see the surprise! Try again!`;
+            giftBtn.style.display = 'block'; giftBtn.innerText = "Restart 🔄"; giftBtn.onclick = () => location.reload();
+        }
+    }
+
+    function openView(id, m) {
+        document.getElementById('gift-selection').style.display = 'none';
+        document.getElementById(id).style.display = 'block';
+        if(id === 'letter-view') typeL();
+        if(m) {
+            music.play();
+            musicCanvas.style.opacity = "1"; // Show notes
+        }
+    }
+
+    function backToGifts() {
+        music.pause(); music.currentTime = 0;
+        musicCanvas.style.opacity = "0"; // Hide notes
+        document.getElementById('letter-view').style.display = 'none';
+        document.getElementById('password-view').style.display = 'none';
+        document.getElementById('music-view').style.display = 'none';
+        document.getElementById('gift-selection').style.display = 'block';
+    }
+
+    function typeL() {
+        const t = "My Dearest Archana,\n\nI am so lucky to have you. You make everything better. Happy Valentine's Day! \n\nForever yours,\nBibin ❤️";
+        const el = document.getElementById('typed-letter'); el.innerHTML = "";
+        let i = 0; const int = setInterval(() => {
+            if(i < t.length) { el.innerHTML += t[i] === '\n' ? '<br>' : t[i]; i++; } else clearInterval(int);
+        }, 50);
+    }
+</script>
+</body>
+</html>
