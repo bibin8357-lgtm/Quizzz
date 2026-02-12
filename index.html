@@ -88,7 +88,7 @@
             height: 52px;
             left: 0;
             bottom: 0;
-            transition: 0.12s ease-out; /* Faster snap */
+            transition: 0.05s linear; /* ULTRA FAST */
             z-index: 100;
         }
 
@@ -97,14 +97,19 @@
 
         .particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 999; }
 
-        .valentine-title { font-family: 'Dancing Script', cursive; font-size: 3rem; font-weight: 700; color: #ff4d6d; animation: floatText 3s ease-in-out infinite; }
-        
+        /* SURPRISE PAGES STYLES - RESTORED */
+        .valentine-title { font-family: 'Dancing Script', cursive; font-size: 3rem; font-weight: 700; color: #ff4d6d; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); animation: floatText 3s ease-in-out infinite; }
+        @keyframes floatText { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
         .gift-container { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
         .gift-item { font-size: 60px; cursor: pointer; transition: 0.3s; animation: wobble 2s infinite; }
-
+        @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
         .letter-view, .password-view, .music-view { display: none; text-align: left; }
-        .letter-paper { background: #fff; padding: 20px; border-radius: 15px; font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #444; border: 1px solid #eee; }
-        .back-icon { font-size: 0.8rem; cursor: pointer; display: inline-block; margin-top: 15px; background: #ffc8dd; padding: 8px 20px; border-radius: 20px; color: white; font-weight: bold; }
+        .letter-paper { background: #fff; padding: 20px; border-radius: 15px; font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #444; margin-bottom: 20px; min-height: 150px; border: 1px solid #eee; }
+        .music-text { font-family: 'Montserrat', sans-serif; font-size: 1.2rem; color: #8338ec; line-height: 1.6; font-weight: 600; text-align: center; background: linear-gradient(45deg, #ff4d6d, #8338ec); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .back-icon { font-size: 0.8rem; cursor: pointer; display: inline-block; margin-top: 15px; background: #ffc8dd; padding: 8px 20px; border-radius: 20px; color: white; font-weight: bold; transition: 0.3s; }
+        .center-btn { text-align: center; width: 100%; }
+        .reveal-pass { opacity: 0; animation: slowShow 2s forwards; }
+        @keyframes slowShow { to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -154,24 +159,29 @@
     <div id="gift-page" class="page">
         <h1 class="valentine-title">Happy Valentine's Day!</h1>
         <div id="gift-selection">
+            <p>You unlocked three surprises, Babbyyy!</p>
             <div class="gift-container">
                 <div class="gift-item" onclick="openView('letter-view')">💌</div>
                 <div class="gift-item" onclick="openView('music-view', true)">🎵</div>
                 <div class="gift-item" onclick="openView('password-view')">🎁</div>
             </div>
         </div>
-        <div id="music-view" style="display:none; text-align:center; padding: 20px;">
-            <p style="color:#8338ec; font-weight:bold;">You are my melody, Archana. ✨</p>
-            <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
+        <div id="music-view" class="music-view">
+            <div style="text-align: center; margin-top: 20px;">
+                <p class="music-text">Every note reminds me of you. <br> You are my melody, Archana. ✨</p>
+                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
+            </div>
         </div>
-        <div id="letter-view" style="display:none;">
+        <div id="letter-view" class="letter-view">
             <div class="letter-paper" id="typed-letter"></div>
-            <div style="text-align:center;"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
+            <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
         </div>
-        <div id="password-view" style="display:none; text-align:center; padding: 20px;">
-            <p>Your Password:</p>
-            <h2 style="color:#ff4d6d; border: 2px dashed #ffafcc; padding: 10px;">Archanamadhu@7736</h2>
-            <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
+        <div id="password-view" class="password-view">
+            <div style="text-align: center; margin-top: 20px;">
+                <p>Secret Gift Password:</p>
+                <h2 class="reveal-pass" style="color: #ff4d6d; background: white; padding: 10px; border-radius: 10px; border: 2px dashed #ffafcc; margin-bottom: 25px;">Archanamadhu@7736</h2>
+                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
+            </div>
         </div>
     </div>
 </div>
@@ -180,7 +190,7 @@
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
     let currentStep = 1; let score = 0; let time = 0;
-    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec'];
+    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
     const music = document.getElementById('bgMusic');
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
@@ -223,30 +233,18 @@
         }, 600);
     }
 
-    // UPDATED: Move further away and faster
     function moveNoButton() {
         const btn = document.getElementById('noButton');
         const grid = document.getElementById('q11-grid');
         const maxX = grid.clientWidth - btn.offsetWidth;
         const maxY = grid.clientHeight - btn.offsetHeight;
-        
-        // Ensure it moves a significant distance from its current spot
-        let newX = Math.random() * maxX;
-        let newY = Math.random() * maxY;
-        
-        btn.style.left = newX + "px";
-        btn.style.top = newY + "px";
+        btn.style.left = Math.random() * maxX + "px";
+        btn.style.top = Math.random() * maxY + "px";
     }
 
     function finalYes(btn) {
-        score++;
-        btn.style.backgroundColor = "#b9fbc0";
-        
-        // TRIGGER HUGE FIREWORKS FOR 5 SECONDS
-        const fireworkInterval = setInterval(() => {
-            createMegaSpark(30); // Multi-spark burst
-        }, 150);
-
+        score++; btn.style.backgroundColor = "#b9fbc0";
+        const fireworkInterval = setInterval(() => createMegaSpark(35), 100);
         setTimeout(() => {
             clearInterval(fireworkInterval);
             document.getElementById(`q11`).classList.remove('active');
@@ -266,28 +264,15 @@
         }
     }
 
-    // UPDATED: More intense fireworks
     function createMegaSpark(count) {
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
-            p.className = 'particle'; 
-            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            p.style.width = (Math.random() * 10 + 5) + 'px'; 
-            p.style.height = p.style.width;
-            p.style.left = Math.random() * 100 + '%'; 
-            p.style.top = Math.random() * 100 + '%';
+            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * 4)];
+            p.style.width = (Math.random() * 12 + 4) + 'px'; p.style.height = p.style.width;
+            p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
             document.body.appendChild(p);
-            
-            const dX = (Math.random() - 0.5) * 1200; 
-            const dY = (Math.random() - 0.5) * 1200;
-            
-            p.animate([
-                { opacity: 1, transform: 'scale(1.5)' }, 
-                { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }
-            ], {
-                duration: 2000,
-                easing: 'ease-out'
-            }).onfinish = () => p.remove();
+            const dX = (Math.random() - 0.5) * 1400, dY = (Math.random() - 0.5) * 1400;
+            p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove();
         }
     }
 
@@ -314,8 +299,7 @@
     }
 
     function backToGifts() {
-        music.pause();
-        music.currentTime = 0;
+        music.pause(); music.currentTime = 0;
         document.getElementById('letter-view').style.display = 'none';
         document.getElementById('password-view').style.display = 'none';
         document.getElementById('music-view').style.display = 'none';
