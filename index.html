@@ -154,6 +154,12 @@
         </div>
     </div>
 
+    <div id="result-page" class="page">
+        <h2>Results!</h2>
+        <p id="result-text"></p>
+        <button id="gift-btn" style="display:none;"></button>
+    </div>
+
     <div id="penalty-page" class="page">
         <h2>Hold on Babbyy! 🛑</h2>
         <p id="penalty-stats"></p>
@@ -168,12 +174,6 @@
         <input type="password" id="masterPass" placeholder="Enter Password Here">
         <button onclick="checkMasterPass()">Unlock My Surprise ✨</button>
         <p id="pass-error" style="color:red; font-size: 0.8rem; display:none; margin-top:10px;">Oops! Wrong Password Babbyy.</p>
-    </div>
-
-    <div id="result-page" class="page">
-        <h2>Results!</h2>
-        <p id="result-text"></p>
-        <button id="gift-btn" style="display:none;"></button>
     </div>
 
     <div id="gift-page" class="page">
@@ -211,11 +211,12 @@
     const ctx = canvas.getContext('2d');
     const musicCanvas = document.getElementById('musicSymbolsCanvas');
     const mctx = musicCanvas.getContext('2d');
-    let currentStep = 1; let score = 0; let time = 0;
-    
-    // --- UPDATED LOGIC FOR CUMULATIVE WRONG ANSWERS ---
-    // Using sessionStorage so it resets to 0 on PAGE REFRESH but stays CUMULATIVE on RESTART click.
-    let totalWrongInSession = parseInt(sessionStorage.getItem('bibin_wrong_count')) || 0;
+
+    // 1 & 3: Standard variables reset to 0 when the page is refreshed.
+    let currentStep = 1; 
+    let score = 0; 
+    let time = 0;
+    let totalWrongCumulative = 0; 
 
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec', '#00f2ff', '#ffea00', '#b9fbc0', '#ff70a6', '#70d6ff', '#fb6f92'];
     const music = document.getElementById('bgMusic');
@@ -226,7 +227,7 @@
     }
     window.addEventListener('resize', resize); resize();
     
-    // Animation Logic
+    // Background Animation Logic (Kept Intact)
     const curveLines = Array.from({length: 60}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 60 + 20,
         frequency: Math.random() * 0.004 + 0.001, speed: Math.random() * 0.015 + 0.005,
@@ -284,25 +285,15 @@
             createSparkles(35); 
         } else { 
             btn.classList.add('shake'); 
-            // INCREMENT AND SAVE CUMULATIVELY
-            totalWrongInSession++;
-            sessionStorage.setItem('bibin_wrong_count', totalWrongInSession);
+            // Increment the cumulative counter
+            totalWrongCumulative++;
         }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++; 
-            document.getElementById(`q${currentStep}`).classList.add('active');
+            const nextEl = document.getElementById(`q${currentStep}`);
+            if(nextEl) nextEl.classList.add('active');
         }, 600);
-    }
-
-    function moveNoButton() {
-        const btn = document.getElementById('noButton');
-        const grid = document.getElementById('q20-grid');
-        const maxX = grid.clientWidth - btn.offsetWidth;
-        const maxY = grid.clientHeight - btn.offsetHeight;
-        btn.style.position = 'absolute';
-        btn.style.left = (Math.random() * maxX) + "px"; 
-        btn.style.top = (Math.random() * maxY) + "px";
     }
 
     function finalYes(btn) {
@@ -321,31 +312,40 @@
         const giftBtn = document.getElementById('gift-btn');
         if (score === 20) {
             text.innerText = "Perfect Score 20/20! Archana, you're amazing! ❤️";
-            giftBtn.style.display = 'block'; giftBtn.innerText = "Proceed to Penalty & Gift"; 
+            giftBtn.style.display = 'block'; giftBtn.innerText = "See the Penalty & Surprise"; 
             giftBtn.onclick = () => {
                 document.getElementById('result-page').classList.remove('active');
                 document.getElementById('penalty-page').classList.add('active');
-                document.getElementById('penalty-stats').innerHTML = `Across all attempts, you clicked <b>${totalWrongInSession}</b> wrong answers.<br>That means you owe Bibin <b>${totalWrongInSession * 2}</b> photos!`;
+                document.getElementById('penalty-stats').innerHTML = `Across all attempts, you clicked <b>${totalWrongCumulative}</b> wrong answers.<br>That means you owe Bibin <b>${totalWrongCumulative * 2}</b> photos!`;
             };
         } else {
-            text.innerText = `Babbyy, you need 20/20! You only got ${score}/20 this time. Your mistakes are piling up!`;
-            giftBtn.style.display = 'block'; giftBtn.innerText = "Restart 🔄"; 
-            // This restarts the quiz but DOES NOT refresh the page, keeping the cumulative count.
-            giftBtn.onclick = () => resetQuizUI(); 
+            text.innerText = `Babbyy, you need 20/20! You only got ${score}/20 this time. Your current cumulative mistakes: ${totalWrongCumulative}`;
+            giftBtn.style.display = 'block'; giftBtn.innerText = "Restart (Mistakes will keep adding up!) 🔄"; 
+            // 2: Soft Reset - Restart without refreshing the page to keep the calculation cumulative.
+            giftBtn.onclick = () => softRestart(); 
         }
     }
 
-    // FUNCTION TO RESTART WITHOUT REFRESHING (Keeping memory)
-    function resetQuizUI() {
-        document.getElementById(`result-page`).classList.remove('active');
+    function softRestart() {
+        document.getElementById('result-page').classList.remove('active');
         currentStep = 1;
         score = 0;
-        // Clean up the buttons from previous round
+        // Reset all buttons visual state
         document.querySelectorAll('.options-grid button').forEach(b => {
             b.classList.remove('shake');
             b.style.backgroundColor = "";
         });
         document.getElementById('q1').classList.add('active');
+    }
+
+    function moveNoButton() {
+        const btn = document.getElementById('noButton');
+        const grid = document.getElementById('q20-grid');
+        const maxX = grid.clientWidth - btn.offsetWidth;
+        const maxY = grid.clientHeight - btn.offsetHeight;
+        btn.style.position = "absolute";
+        btn.style.left = (Math.random() * maxX) + "px"; 
+        btn.style.top = (Math.random() * maxY) + "px";
     }
 
     function goToLockPage() {
@@ -362,7 +362,7 @@
         }
     }
 
-    // Visual Effects functions
+    // Effect Logic (Kept Intact)
     function createSparkles(count) { for (let i = 0; i < count; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; p.style.width = '10px'; p.style.height = '10px'; p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p); const dX = (Math.random() - 0.5) * 700, dY = (Math.random() - 0.5) * 700; p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove(); } }
     function createMegaSpark(count) { for (let i = 0; i < count; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; p.style.width = '15px'; p.style.height = '15px'; p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%'; document.body.appendChild(p); const dX = (Math.random() - 0.5) * 1500, dY = (Math.random() - 0.5) * 1500; p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove(); } }
     function createCrackers(count) { for (let i = 0; i < count; i++) { const c = document.createElement('div'); c.className = 'cracker'; c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; c.style.left = Math.random() * 100 + '%'; c.style.top = Math.random() * 100 + '%'; document.body.appendChild(c); const angle = Math.random() * Math.PI * 2; const dist = Math.random() * 1000 + 300; const dX = Math.cos(angle) * dist; const dY = Math.sin(angle) * dist; c.animate([{ transform: `rotate(${angle}rad) translate(0,0) scaleY(1.5)`, opacity: 1 }, { transform: `rotate(${angle}rad) translate(${dX}px, ${dY}px) scaleY(0)`, opacity: 0 }], { duration: 900, easing: 'ease-out' }).onfinish = () => c.remove(); } }
