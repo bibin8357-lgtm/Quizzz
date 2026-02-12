@@ -68,16 +68,37 @@
 
         .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; position: relative; min-height: 280px; }
 
+        /* BUTTONS WITH GLASS SHINE EFFECT */
         button {
             width: 100%; padding: 14px; border: 2px solid #ffccd5;
             background: rgba(255, 255, 255, 0.9); border-radius: 20px;
             cursor: pointer; transition: 0.3s; color: var(--text-color);
             font-family: 'Quicksand', sans-serif; font-weight: 700;
+            position: relative; overflow: hidden;
         }
         
         button:hover { 
             background: linear-gradient(45deg, #ffafcc, #bde0fe); 
             color: white; border-color: white; transform: scale(1.03); 
+        }
+
+        /* Glass Shine Animation */
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: rotate(45deg);
+            transition: none;
+            animation: glassSweep 0.5s forwards;
+        }
+
+        @keyframes glassSweep {
+            0% { transform: translate(-100%, -100%) rotate(45deg); }
+            100% { transform: translate(100%, 100%) rotate(45deg); }
         }
 
         #noButton {
@@ -196,7 +217,6 @@
     }
     window.addEventListener('resize', resize); resize();
     
-    // Background Lines
     const curveLines = Array.from({length: 60}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 60 + 20,
         frequency: Math.random() * 0.004 + 0.001, speed: Math.random() * 0.015 + 0.005,
@@ -210,23 +230,23 @@
         length: Math.random() * 200 + 50, x: Math.random() * canvas.width
     }));
 
-    // Music Symbols System
+    // Multi-Colored Music Symbols
     const notes = ['♪', '♫', '♬', '♩', '∮', '♭'];
-    const musicalParticles = Array.from({length: 40}, () => ({
+    const musicalParticles = Array.from({length: 45}, () => ({
         x: Math.random() * window.innerWidth,
         y: Math.random() * window.innerHeight + window.innerHeight,
         text: notes[Math.floor(Math.random() * notes.length)],
-        size: Math.random() * 20 + 20,
+        size: Math.random() * 25 + 20,
         speed: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.5 + 0.5,
-        drift: Math.random() * 2 - 1
+        opacity: Math.random() * 0.6 + 0.4,
+        drift: Math.random() * 2 - 1,
+        color: colors[Math.floor(Math.random() * colors.length)] // Different colors!
     }));
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         mctx.clearRect(0, 0, musicCanvas.width, musicCanvas.height);
         
-        // Curves
         curveLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
             ctx.moveTo(0, line.yBase);
@@ -237,17 +257,16 @@
             ctx.stroke();
         });
 
-        // Straight Lines
         straightLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = 0.4; ctx.lineWidth = line.width;
             ctx.moveTo(line.x, line.y); ctx.lineTo(line.x + line.length, line.y); ctx.stroke();
             line.x += line.speed; if (line.x > canvas.width) line.x = -line.length;
         });
 
-        // Music Notes
         musicalParticles.forEach(p => {
             mctx.font = `${p.size}px Arial`;
-            mctx.fillStyle = `rgba(131, 56, 236, ${p.opacity})`;
+            mctx.fillStyle = p.color; // Applying the multi-color
+            mctx.globalAlpha = p.opacity;
             mctx.fillText(p.text, p.x, p.y);
             p.y -= p.speed;
             p.x += Math.sin(time * 0.05) * p.drift;
@@ -267,11 +286,21 @@
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createSparkles(35); } 
-        else { btn.classList.add('shake'); }
+        btn.classList.add('shine-effect'); // Trigger glass shine
+        
+        if(isCorrect) { 
+            score++; 
+            btn.style.backgroundColor = "#b9fbc0"; 
+            createSparkles(35); 
+        } else { 
+            btn.classList.add('shake'); 
+        }
+
         setTimeout(() => {
+            btn.classList.remove('shine-effect');
             document.getElementById(`q${currentStep}`).classList.remove('active');
-            currentStep++; document.getElementById(`q${currentStep}`).classList.add('active');
+            currentStep++; 
+            document.getElementById(`q${currentStep}`).classList.add('active');
         }, 600);
     }
 
@@ -289,6 +318,7 @@
     }
 
     function finalYes(btn) {
+        btn.classList.add('shine-effect');
         score++; btn.style.backgroundColor = "#b9fbc0";
         const effectInterval = setInterval(() => { createMegaSpark(30); createCrackers(20); }, 100);
         setTimeout(() => {
@@ -355,13 +385,13 @@
         if(id === 'letter-view') typeL();
         if(m) {
             music.play();
-            musicCanvas.style.opacity = "1"; // Show notes
+            musicCanvas.style.opacity = "1";
         }
     }
 
     function backToGifts() {
         music.pause(); music.currentTime = 0;
-        musicCanvas.style.opacity = "0"; // Hide notes
+        musicCanvas.style.opacity = "0";
         document.getElementById('letter-view').style.display = 'none';
         document.getElementById('password-view').style.display = 'none';
         document.getElementById('music-view').style.display = 'none';
