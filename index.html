@@ -227,7 +227,7 @@
         if(isCorrect) { 
             score++; 
             btn.style.backgroundColor = "#b9fbc0"; 
-            createSparkles(40); // Increased count and now more colorful
+            createSparkles(40); 
         } 
         else { btn.classList.add('shake'); }
         setTimeout(() => {
@@ -268,22 +268,23 @@
         }, 5000); 
     }
 
+    // UPDATED: Faster sparkle pop logic
     function createSparkles(count) {
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
             p.className = 'particle'; 
-            // UPDATED: Now picks from ALL colors including gold, blue, and purple
             p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
             p.style.width = (Math.random() * 8 + 4) + 'px'; 
             p.style.height = p.style.width;
             p.style.left = '50%'; p.style.top = '50%'; 
             document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 800, dY = (Math.random() - 0.5) * 800;
+            const dX = (Math.random() - 0.5) * 1000, dY = (Math.random() - 0.5) * 1000;
+            
+            // Animation is now instant (0 to 400ms) with no scale-up delay
             p.animate([
-                { opacity: 1, transform: 'scale(0)' }, 
-                { opacity: 1, transform: 'scale(1.2)', offset: 0.3 },
+                { opacity: 1, transform: 'scale(1.5) translate(0,0)' },
                 { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }
-            ], 1200).onfinish = () => p.remove();
+            ], { duration: 400, easing: 'ease-out' }).onfinish = () => p.remove();
         }
     }
 
