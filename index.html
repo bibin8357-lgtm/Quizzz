@@ -34,6 +34,7 @@
 
         #lineCanvas { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
 
+        /* --- UPDATED RAINBOW QUIZ BOX --- */
         .container {
             background: linear-gradient(-45deg, #ffffff, #fff0f3, #f0f7ff, #ffffff);
             background-size: 300% 300%;
@@ -70,7 +71,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; position: relative; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
 
         button {
             width: 100%; padding: 14px; border: 2px solid #ffccd5;
@@ -84,10 +85,10 @@
             color: white; border-color: white; transform: scale(1.03); 
         }
 
-        /* Movement style for the No button */
+        /* Float behavior for the No button */
         #noButton {
             transition: all 0.2s ease;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
@@ -166,12 +167,13 @@
     <div id="q8" class="page"><h2>Question 8</h2><p>What is my favorite thing about you?</p><div class="options-grid"><button onclick="next(this, false)">Your Eyes</button><button onclick="next(this, false)">Your Smile</button><button onclick="next(this, true)">Everything!</button><button onclick="next(this, false)">Effortless Movement</button></div></div>
     <div id="q9" class="page"><h2>Question 9</h2><p>Which is my fav thing you says?</p><div class="options-grid"><button onclick="next(this, false)">Bibinee</button><button onclick="next(this, true)">Entha Bibinneee</button><button onclick="next(this, false)">Babbyyy</button><button onclick="next(this, false)">Poddaaa</button></div></div>
     <div id="q10" class="page"><h2>Question 10</h2><p>Do you love me?</p><div class="options-grid"><button onclick="next(this, true)">YESSS!</button><button onclick="next(this, false)">No</button><button onclick="next(this, false)">Maybe</button><button onclick="next(this, false)">I'll think about it</button></div></div>
+    
     <div id="q11" class="page">
         <h2>Question 11</h2>
         <p>Will you be my Valentine? </p>
         <div class="options-grid">
             <button onclick="checkScore(this, true)">YES!</button>
-            <button id="noButton" onmouseover="moveNoButton()" onclick="moveNoButton()">No way</button>
+            <button id="noButton" onclick="floatNoButton()">No way</button>
         </div>
     </div>
 
@@ -280,15 +282,16 @@
         }, 600);
     }
 
-    // Function to make the NO button move
-    function moveNoButton() {
-        const noBtn = document.getElementById('noButton');
-        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+    // New logic: Floating "No" button
+    function floatNoButton() {
+        const btn = document.getElementById('noButton');
+        // Calculate random position within screen bounds
+        const x = Math.random() * (window.innerWidth - btn.offsetWidth - 20);
+        const y = Math.random() * (window.innerHeight - btn.offsetHeight - 20);
         
-        noBtn.style.position = 'fixed';
-        noBtn.style.left = Math.max(10, Math.min(x, window.innerWidth - 100)) + 'px';
-        noBtn.style.top = Math.max(10, Math.min(y, window.innerHeight - 50)) + 'px';
+        btn.style.position = 'fixed';
+        btn.style.left = x + 'px';
+        btn.style.top = y + 'px';
     }
 
     function checkScore(btn, isCorrect) {
@@ -299,11 +302,13 @@
             document.getElementById('result-page').classList.add('active');
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
+            
+            // Check if she got all 11 correct
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! ✨`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
             } else {
-                text.innerText = `You got ${score}/11. Try again! 🌸`;
+                text.innerText = `You got ${score}/11. You need 11/11 to unlock the gifts! 🌸`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
             }
         }, 600);
