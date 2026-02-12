@@ -50,15 +50,7 @@
             box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6), 
                         0 0 20px 2px #ffafcc, 
                         0 0 25px 5px #bde0fe;
-            /* Added to keep things inside */
-            min-height: 450px; 
-            overflow: visible;
-        }
-
-        @keyframes moveGradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            min-height: 480px;
         }
 
         h1 { font-family: 'Great Vibes', cursive; color: var(--text-color); margin: 0 0 15px 0; font-size: 2.5rem; }
@@ -73,7 +65,14 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; position: relative; height: 100%; }
+        .options-grid { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            margin-top: 20px; 
+            position: relative; 
+            min-height: 200px; /* Room for the button to jump */
+        }
 
         button {
             width: 100%; padding: 14px; border: 2px solid #ffccd5;
@@ -81,20 +80,37 @@
             cursor: pointer; transition: 0.3s; color: var(--text-color);
             font-family: 'Quicksand', sans-serif; font-weight: 700;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-size: 1rem;
         }
         button:hover { 
             background: linear-gradient(45deg, #ffafcc, #bde0fe); 
             color: white; border-color: white; transform: scale(1.03); 
         }
 
-        /* Fixed styling for No button to allow internal movement */
+        /* Fixed size for the No button */
         #noButton {
-            transition: 0.2s ease;
+            position: absolute;
+            width: 100%; /* Same as Yes button */
+            max-width: 330px;
+            transition: 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 100;
+            left: 0;
+            bottom: 0;
         }
 
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+
+        /* Mega Firework Particle */
+        .mega-sparkle {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            box-shadow: 0 0 10px white;
+        }
 
         .valentine-title { 
             font-family: 'Dancing Script', cursive; 
@@ -104,11 +120,9 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
             animation: floatText 3s ease-in-out infinite; 
         }
-        @keyframes floatText { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
         
         .gift-container { display: flex; justify-content: center; gap: 20px; margin: 30px 0; }
         .gift-item { font-size: 60px; cursor: pointer; transition: 0.3s; animation: wobble 2s infinite; }
-        @keyframes wobble { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(5deg); } 75% { transform: rotate(-5deg); } }
 
         .letter-view, .password-view, .music-view { display: none; text-align: left; }
         .letter-paper { background: #fff; padding: 20px; border-radius: 15px; font-family: 'Dancing Script', cursive; font-size: 1.4rem; color: #444; margin-bottom: 20px; min-height: 150px; border: 1px solid #eee; }
@@ -118,8 +132,6 @@
             font-size: 1.2rem;
             color: #8338ec;
             line-height: 1.6;
-            letter-spacing: 0.5px;
-            font-weight: 600;
             text-align: center;
             background: linear-gradient(45deg, #ff4d6d, #8338ec);
             -webkit-background-clip: text;
@@ -130,15 +142,7 @@
             font-size: 0.8rem; cursor: pointer; display: inline-block; 
             margin-top: 15px; background: #ffc8dd; padding: 8px 20px; 
             border-radius: 20px; color: white; font-weight: bold;
-            transition: 0.3s; text-align: center;
         }
-        .back-icon:hover { background: #ffafcc; transform: translateY(-2px); }
-        .center-btn { text-align: center; width: 100%; }
-
-        .reveal-pass { opacity: 0; animation: slowShow 2s forwards; }
-        @keyframes slowShow { to { opacity: 1; } }
-
-        .particle { position: absolute; width: 8px; height: 8px; border-radius: 50%; pointer-events: none; z-index: 999; }
     </style>
 </head>
 <body>
@@ -173,9 +177,9 @@
     <div id="q11" class="page">
         <h2>Question 11</h2>
         <p>Will you be my Valentine? </p>
-        <div class="options-grid" style="height: 150px;">
-            <button onclick="checkScore(this, true)">YES!</button>
-            <button id="noButton" style="position: absolute; bottom: 0; left: 0;" onclick="moveNoButton()">No way</button>
+        <div class="options-grid" id="q11-grid">
+            <button id="yesButton" onclick="checkScore(this, true)">YES!</button>
+            <button id="noButton" onclick="moveNoButton()">No way</button>
         </div>
     </div>
 
@@ -195,30 +199,19 @@
                 <div class="gift-item" onclick="openView('password-view')">🎁</div>
             </div>
         </div>
-
         <div id="music-view" class="music-view">
-            <div style="text-align: center; margin-top: 20px;">
-                <p class="music-text">
-                    Every note of this song reminds me of you. <br>
-                    You are the melody in my heart, Archana. <br>
-                    I could listen to this forever with you. ✨
-                </p>
-                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
-            </div>
+            <p class="music-text">Every note reminds me of you. <br> You are my melody, Archana. ✨</p>
+            <div style="text-align: center;"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
         </div>
-
         <div id="letter-view" class="letter-view">
             <div class="letter-paper" id="typed-letter"></div>
-            <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
+            <div style="text-align: center;"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
         </div>
-
         <div id="password-view" class="password-view">
-            <div style="text-align: center; margin-top: 20px;">
+            <div style="text-align: center;">
                 <p>The secret gift password is:</p>
-                <h2 class="reveal-pass" style="color: #ff4d6d; background: white; padding: 10px; border-radius: 10px; border: 2px dashed #ffafcc; margin-bottom: 25px;">
-                    Archanamadhu@7736
-                </h2>
-                <div class="center-btn"><div class="back-icon" onclick="backToGifts()">🌸 Back</div></div>
+                <h2 class="reveal-pass" style="color:#ff4d6d; border:2px dashed #ffafcc; padding:10px;">Archanamadhu@7736</h2>
+                <div class="back-icon" onclick="backToGifts()">🌸 Back</div>
             </div>
         </div>
     </div>
@@ -233,49 +226,13 @@
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
 
-    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff'];
-    const curveLines = Array.from({length: 40}, () => ({
-        yBase: Math.random() * canvas.height, amplitude: Math.random() * 50 + 20,
-        frequency: Math.random() * 0.003 + 0.001, speed: Math.random() * 0.01 + 0.005,
-        offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * colors.length)],
-        width: Math.random() * 3 + 2, opacity: 0.2
-    }));
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        curveLines.forEach(line => {
-            ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
-            ctx.moveTo(0, line.yBase);
-            for (let x = 0; x < canvas.width; x += 20) {
-                const y = line.yBase + Math.sin(x * line.frequency + (time * line.speed) + line.offset) * line.amplitude;
-                ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-        });
-        time += 1; requestAnimationFrame(animate);
-    }
-    animate();
-
-    const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
-    function typeLetter() {
-        const target = document.getElementById('typed-letter');
-        target.innerHTML = "";
-        let i = 0;
-        const timer = setInterval(() => {
-            if (i < letterText.length) {
-                target.innerHTML += letterText.charAt(i) === '\n' ? '<br>' : letterText.charAt(i);
-                i++;
-            } else { clearInterval(timer); }
-        }, 50);
-    }
-
     function startQuiz() {
         document.getElementById('instruction-page').classList.remove('active');
         document.getElementById('q1').classList.add('active');
     }
 
     function next(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(35); } 
+        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; } 
         else { btn.classList.add('shake'); }
         setTimeout(() => {
             document.getElementById(`q${currentStep}`).classList.remove('active');
@@ -284,49 +241,66 @@
         }, 600);
     }
 
-    /* LOGIC TO MOVE BUTTON WITHIN CONTAINER */
+    /* --- ENHANCED MOVEMENT WITHIN CONTAINER --- */
     function moveNoButton() {
         const btn = document.getElementById('noButton');
-        const container = document.getElementById('quizContainer');
+        const grid = document.getElementById('q11-grid');
         
-        // Find the available space inside the container
-        const maxX = container.clientWidth - btn.offsetWidth - 40;
-        const maxY = container.clientHeight - btn.offsetHeight - 100;
+        // Calculate max boundaries based on the grid area
+        const maxX = grid.clientWidth - btn.offsetWidth;
+        const maxY = grid.clientHeight - btn.offsetHeight;
         
-        // Random position
+        // Random everywhere: X (left-right) and Y (up-down)
         const newX = Math.random() * maxX;
         const newY = Math.random() * maxY;
         
-        // Apply the new position
         btn.style.left = newX + "px";
         btn.style.top = newY + "px";
     }
 
     function checkScore(btn, isCorrect) {
-        if(isCorrect) { score++; btn.style.backgroundColor = "#b9fbc0"; createFireworks(40); }
-        else { btn.classList.add('shake'); }
+        if(isCorrect) { 
+            score++; 
+            btn.style.backgroundColor = "#b9fbc0"; 
+            createMegaFirework(); // The huge Sparkle!
+        }
         setTimeout(() => {
             document.getElementById(`q11`).classList.remove('active');
             document.getElementById('result-page').classList.add('active');
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
+            
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! ✨`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
             } else {
-                text.innerText = `You got ${score}/11. Try again for a perfect score! 🌸`;
+                text.innerText = `Score: ${score}/11. You must get all 11 correct to see the surprise!`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
             }
-        }, 600);
+        }, 800);
     }
 
-    function createFireworks(count = 10) {
-        for (let i = 0; i < count; i++) {
+    /* --- THE HUGE FIREWORK EFFECT --- */
+    function createMegaFirework() {
+        const colors = ['#ff4d6d', '#ffafcc', '#8338ec', '#bde0fe', '#fffb00'];
+        for (let i = 0; i < 150; i++) { // 150 particles for "HUGE" effect
             const p = document.createElement('div');
-            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
-            p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 500, dY = (Math.random() - 0.5) * 500;
-            p.animate([{ opacity: 1, transform: 'translate(0,0) scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0.2)` }], 1200).onfinish = () => p.remove();
+            p.className = 'mega-sparkle';
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            p.style.left = '50%';
+            p.style.top = '50%';
+            document.body.appendChild(p);
+            
+            const velocityX = (Math.random() - 0.5) * 1200;
+            const velocityY = (Math.random() - 0.5) * 1200;
+
+            p.animate([
+                { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                { transform: `translate(${velocityX}px, ${velocityY}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: 2000,
+                easing: 'cubic-bezier(0, .9, .57, 1)'
+            }).onfinish = () => p.remove();
         }
     }
 
@@ -342,13 +316,33 @@
         if(isMusic) music.play();
     }
 
+    const letterText = "My Dearest Archana,\n\nThank you for being in my life. Every moment with you is a treasure. I'm so happy I found you. \n\nAlways yours, \nBibin ❤️";
+    function typeLetter() {
+        const target = document.getElementById('typed-letter');
+        target.innerHTML = "";
+        let i = 0;
+        const timer = setInterval(() => {
+            if (i < letterText.length) {
+                target.innerHTML += letterText.charAt(i) === '\n' ? '<br>' : letterText.charAt(i);
+                i++;
+            } else { clearInterval(timer); }
+        }, 50);
+    }
+
     function backToGifts() {
-        music.pause(); music.currentTime = 0;
+        music.pause();
         document.getElementById('letter-view').style.display = 'none';
         document.getElementById('password-view').style.display = 'none';
         document.getElementById('music-view').style.display = 'none';
         document.getElementById('gift-selection').style.display = 'block';
     }
+
+    // BG Animation
+    function animateLines() {
+        time += 1;
+        requestAnimationFrame(animateLines);
+    }
+    animateLines();
 </script>
 </body>
 </html>
