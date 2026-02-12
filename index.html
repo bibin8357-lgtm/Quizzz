@@ -190,22 +190,36 @@
     const canvas = document.getElementById('lineCanvas');
     const ctx = canvas.getContext('2d');
     let currentStep = 1; let score = 0; let time = 0;
-    // FULL RAINBOW COLOR PALETTE RESTORED
-    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec', '#00f2ff', '#ffea00', '#b9fbc0'];
+    
+    // 1. EXTENDED VIBRANT COLOR PALETTE
+    const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec', '#00f2ff', '#ffea00', '#b9fbc0', '#ff70a6', '#70d6ff', '#fb6f92'];
     const music = document.getElementById('bgMusic');
 
     function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
     
-    const curveLines = Array.from({length: 40}, () => ({
-        yBase: Math.random() * canvas.height, amplitude: Math.random() * 50 + 20,
-        frequency: Math.random() * 0.003 + 0.001, speed: Math.random() * 0.01 + 0.005,
-        offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * 4)],
-        width: Math.random() * 3 + 2, opacity: 0.2
+    // 2. INCREASED CURVED LINES COUNT
+    const curveLines = Array.from({length: 60}, () => ({
+        yBase: Math.random() * canvas.height, amplitude: Math.random() * 60 + 20,
+        frequency: Math.random() * 0.004 + 0.001, speed: Math.random() * 0.015 + 0.005,
+        offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * colors.length)],
+        width: Math.random() * 2 + 1, opacity: 0.3
+    }));
+
+    // 3. NEW STRAIGHT LINES SYSTEM
+    const straightLines = Array.from({length: 25}, () => ({
+        y: Math.random() * canvas.height,
+        speed: Math.random() * 2 + 1,
+        width: Math.random() * 1.5 + 0.5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        length: Math.random() * 200 + 50,
+        x: Math.random() * canvas.width
     }));
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw Curves
         curveLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
             ctx.moveTo(0, line.yBase);
@@ -215,6 +229,21 @@
             }
             ctx.stroke();
         });
+
+        // Draw Moving Straight Lines
+        straightLines.forEach(line => {
+            ctx.beginPath();
+            ctx.strokeStyle = line.color;
+            ctx.globalAlpha = 0.4;
+            ctx.lineWidth = line.width;
+            ctx.moveTo(line.x, line.y);
+            ctx.lineTo(line.x + line.length, line.y);
+            ctx.stroke();
+            
+            line.x += line.speed;
+            if (line.x > canvas.width) line.x = -line.length;
+        });
+
         time += 1; requestAnimationFrame(animate);
     }
     animate();
@@ -269,19 +298,15 @@
         }, 5000); 
     }
 
-    // UPDATED: BIGGER, MORE COLORFUL, FAST SPARKLES
     function createSparkles(count) {
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
             p.className = 'particle'; 
-            // Full color spectrum
             p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            // Increased Size (original was 8px)
             p.style.width = (Math.random() * 6 + 10) + 'px'; 
             p.style.height = p.style.width;
             p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
             const dX = (Math.random() - 0.5) * 700, dY = (Math.random() - 0.5) * 700;
-            // Kept fast original logic
             p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove();
         }
     }
