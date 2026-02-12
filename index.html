@@ -50,6 +50,9 @@
             box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.6), 
                         0 0 20px 2px #ffafcc, 
                         0 0 25px 5px #bde0fe;
+            /* Added to keep things inside */
+            min-height: 450px; 
+            overflow: visible;
         }
 
         @keyframes moveGradient {
@@ -70,7 +73,7 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; position: relative; height: 100%; }
 
         button {
             width: 100%; padding: 14px; border: 2px solid #ffccd5;
@@ -84,10 +87,10 @@
             color: white; border-color: white; transform: scale(1.03); 
         }
 
-        /* --- STYLES FOR THE MOVING BUTTON --- */
+        /* Fixed styling for No button to allow internal movement */
         #noButton {
-            transition: left 0.2s ease, top 0.2s ease;
-            z-index: 9999;
+            transition: 0.2s ease;
+            z-index: 100;
         }
 
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
@@ -142,7 +145,7 @@
 
 <canvas id="lineCanvas"></canvas>
 
-<div class="container">
+<div class="container" id="quizContainer">
     <audio id="bgMusic" loop><source src="music.mp3.mp3" type="audio/mpeg"></audio>
 
     <div id="instruction-page" class="page active">
@@ -170,9 +173,9 @@
     <div id="q11" class="page">
         <h2>Question 11</h2>
         <p>Will you be my Valentine? </p>
-        <div class="options-grid">
+        <div class="options-grid" style="height: 150px;">
             <button onclick="checkScore(this, true)">YES!</button>
-            <button id="noButton" onclick="moveNoButton()">No way</button>
+            <button id="noButton" style="position: absolute; bottom: 0; left: 0;" onclick="moveNoButton()">No way</button>
         </div>
     </div>
 
@@ -281,21 +284,22 @@
         }, 600);
     }
 
-    /* --- UPDATED BUTTON MOVEMENT LOGIC --- */
+    /* LOGIC TO MOVE BUTTON WITHIN CONTAINER */
     function moveNoButton() {
         const btn = document.getElementById('noButton');
+        const container = document.getElementById('quizContainer');
         
-        // Calculate bounds so it stays on screen
-        const maxX = window.innerWidth - btn.offsetWidth - 20;
-        const maxY = window.innerHeight - btn.offsetHeight - 20;
+        // Find the available space inside the container
+        const maxX = container.clientWidth - btn.offsetWidth - 40;
+        const maxY = container.clientHeight - btn.offsetHeight - 100;
         
-        // Randomly pick a new spot
+        // Random position
         const newX = Math.random() * maxX;
         const newY = Math.random() * maxY;
         
-        btn.style.position = 'fixed';
-        btn.style.left = newX + 'px';
-        btn.style.top = newY + 'px';
+        // Apply the new position
+        btn.style.left = newX + "px";
+        btn.style.top = newY + "px";
     }
 
     function checkScore(btn, isCorrect) {
@@ -306,13 +310,11 @@
             document.getElementById('result-page').classList.add('active');
             const text = document.getElementById('result-text');
             const giftBtn = document.getElementById('gift-btn');
-            
-            // Strictly check for 11/11
             if (score === 11) {
                 text.innerText = `Perfect Score! 11/11! ✨`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Your Gifts"; giftBtn.onclick = showGift;
             } else {
-                text.innerText = `You missed some questions (Score: ${score}/11). You must get them all right! 🌸`;
+                text.innerText = `You got ${score}/11. Try again for a perfect score! 🌸`;
                 giftBtn.style.display = 'block'; giftBtn.innerText = "Try Again 🔄"; giftBtn.onclick = () => location.reload();
             }
         }, 600);
