@@ -83,30 +83,7 @@
 
         input[type="password"] {
             width: 100%; padding: 12px; border-radius: 15px; border: 2px solid #ffccd5;
-            margin-bottom: 15px; text-align: center; font-family: 'Quicksand', sans-serif;
-        }
-
-        .shine-effect::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(to bottom right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
-            transform: rotate(45deg);
-            transition: none;
-            animation: glassSweep 0.5s forwards;
-        }
-
-        @keyframes glassSweep {
-            0% { transform: translate(-100%, -100%) rotate(45deg); }
-            100% { transform: translate(100%, 100%) rotate(45deg); }
-        }
-
-        #noButton {
-            position: absolute; width: 100%; height: 52px; left: 0; bottom: 0; transition: 0.05s linear; z-index: 100;
-            background: rgba(255, 255, 255, 0.9) !important; color: var(--text-color) !important; border: 2px solid #ffccd5 !important;
+            margin-bottom: 15px; text-align: center; font-family: 'Quicksand', sans-serif; outline: none;
         }
 
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
@@ -180,7 +157,7 @@
     <div id="penalty-page" class="page">
         <h2>Hold on Babbyy! 🛑</h2>
         <p id="penalty-stats"></p>
-        <p style="font-size: 0.8rem; color: #ff4d6d;">(1 Wrong = 2 Kolathillatha Photos)</p>
+        <p style="font-size: 0.8rem; color: #ff4d6d;">(Grand Total: All attempts included!)</p>
         <p>Do you accept this condition to proceed?</p>
         <button onclick="goToLockPage()">I Accept ❤️</button>
     </div>
@@ -234,8 +211,12 @@
     const ctx = canvas.getContext('2d');
     const musicCanvas = document.getElementById('musicSymbolsCanvas');
     const mctx = musicCanvas.getContext('2d');
-    let currentStep = 1; let score = 0; let time = 0; let wrongCount = 0;
+    let currentStep = 1; let score = 0; let time = 0;
     
+    // FETCH OLD WRONG ANSWERS FROM MEMORY
+    let totalWrongInSession = parseInt(localStorage.getItem('bibin_wrong_count')) || 0;
+    let currentAttemptWrong = 0;
+
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec', '#00f2ff', '#ffea00', '#b9fbc0', '#ff70a6', '#70d6ff', '#fb6f92'];
     const music = document.getElementById('bgMusic');
 
@@ -245,35 +226,29 @@
     }
     window.addEventListener('resize', resize); resize();
     
+    // Animation Logic (Preserved)
     const curveLines = Array.from({length: 60}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 60 + 20,
         frequency: Math.random() * 0.004 + 0.001, speed: Math.random() * 0.015 + 0.005,
         offset: Math.random() * 5000, color: colors[Math.floor(Math.random() * colors.length)],
         width: Math.random() * 2 + 1, opacity: 0.3
     }));
-
     const straightLines = Array.from({length: 25}, () => ({
         y: Math.random() * canvas.height, speed: Math.random() * 2 + 1,
         width: Math.random() * 1.5 + 0.5, color: colors[Math.floor(Math.random() * colors.length)],
         length: Math.random() * 200 + 50, x: Math.random() * canvas.width
     }));
-
     const notes = ['♪', '♫', '♬', '♩', '∮', '♭'];
     const musicalParticles = Array.from({length: 45}, () => ({
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight + window.innerHeight,
-        text: notes[Math.floor(Math.random() * notes.length)],
-        size: Math.random() * 25 + 20,
-        speed: Math.random() * 2 + 1,
-        opacity: Math.random() * 0.6 + 0.4,
-        drift: Math.random() * 2 - 1,
+        x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight + window.innerHeight,
+        text: notes[Math.floor(Math.random() * notes.length)], size: Math.random() * 25 + 20,
+        speed: Math.random() * 2 + 1, opacity: Math.random() * 0.6 + 0.4, drift: Math.random() * 2 - 1,
         color: colors[Math.floor(Math.random() * colors.length)]
     }));
 
     function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         mctx.clearRect(0, 0, musicCanvas.width, musicCanvas.height);
-        
         curveLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = line.opacity; ctx.lineWidth = line.width;
             ctx.moveTo(0, line.yBase);
@@ -283,26 +258,16 @@
             }
             ctx.stroke();
         });
-
         straightLines.forEach(line => {
             ctx.beginPath(); ctx.strokeStyle = line.color; ctx.globalAlpha = 0.4; ctx.lineWidth = line.width;
             ctx.moveTo(line.x, line.y); ctx.lineTo(line.x + line.length, line.y); ctx.stroke();
             line.x += line.speed; if (line.x > canvas.width) line.x = -line.length;
         });
-
         musicalParticles.forEach(p => {
-            mctx.font = `${p.size}px Arial`;
-            mctx.fillStyle = p.color;
-            mctx.globalAlpha = p.opacity;
-            mctx.fillText(p.text, p.x, p.y);
-            p.y -= p.speed;
-            p.x += Math.sin(time * 0.05) * p.drift;
-            if (p.y < -50) {
-                p.y = musicCanvas.height + 50;
-                p.x = Math.random() * musicCanvas.width;
-            }
+            mctx.font = `${p.size}px Arial`; mctx.fillStyle = p.color; mctx.globalAlpha = p.opacity;
+            mctx.fillText(p.text, p.x, p.y); p.y -= p.speed; p.x += Math.sin(time * 0.05) * p.drift;
+            if (p.y < -50) { p.y = musicCanvas.height + 50; p.x = Math.random() * musicCanvas.width; }
         });
-
         time += 1; requestAnimationFrame(animate);
     }
     animate();
@@ -313,18 +278,18 @@
     }
 
     function next(btn, isCorrect) {
-        btn.classList.add('shine-effect');
         if(isCorrect) { 
             score++; 
             btn.style.backgroundColor = "#b9fbc0"; 
             createSparkles(35); 
         } else { 
             btn.classList.add('shake'); 
-            wrongCount++; // TRACKING WRONG ANSWERS
+            currentAttemptWrong++; 
+            // SAVE TO MEMORY IMMEDIATELY
+            totalWrongInSession++;
+            localStorage.setItem('bibin_wrong_count', totalWrongInSession);
         }
-
         setTimeout(() => {
-            btn.classList.remove('shine-effect');
             document.getElementById(`q${currentStep}`).classList.remove('active');
             currentStep++; 
             document.getElementById(`q${currentStep}`).classList.add('active');
@@ -336,25 +301,20 @@
         const grid = document.getElementById('q20-grid');
         const maxX = grid.clientWidth - btn.offsetWidth;
         const maxY = grid.clientHeight - btn.offsetHeight;
-        let newX, newY;
-        const currentX = parseFloat(btn.style.left) || 0;
-        const currentY = parseFloat(btn.style.top) || 0;
-        do { newX = Math.random() * maxX; newY = Math.random() * maxY;
-        } while (Math.abs(newX - currentX) < 100 && Math.abs(newY - currentY) < 100);
-        btn.style.left = newX + "px"; btn.style.top = newY + "px";
+        btn.style.left = (Math.random() * maxX) + "px"; 
+        btn.style.top = (Math.random() * maxY) + "px";
     }
 
     function finalYes(btn) {
-        btn.classList.add('shine-effect');
         score++; btn.style.backgroundColor = "#b9fbc0";
         const effectInterval = setInterval(() => { createMegaSpark(30); createCrackers(20); }, 100);
         setTimeout(() => {
             clearInterval(effectInterval);
             document.getElementById(`q20`).classList.remove('active');
-            // GO TO PENALTY PAGE FIRST
             document.getElementById('penalty-page').classList.add('active');
-            document.getElementById('penalty-stats').innerHTML = `You clicked <b>${wrongCount}</b> wrong answers.<br>That means you owe Bibin <b>${wrongCount * 2}</b> photos!`;
-        }, 5000); 
+            // SHOW THE ACCUMULATED WRONG ANSWERS
+            document.getElementById('penalty-stats').innerHTML = `Across all attempts, you clicked <b>${totalWrongInSession}</b> wrong answers.<br>That means you owe Bibin <b>${totalWrongInSession * 2}</b> photos!`;
+        }, 3000); 
     }
 
     function goToLockPage() {
@@ -363,50 +323,12 @@
     }
 
     function checkMasterPass() {
-        const pass = document.getElementById('masterPass').value;
-        if(pass === "Bibin@2005") {
+        if(document.getElementById('masterPass').value === "Bibin@2005") {
             document.getElementById('lock-page').classList.remove('active');
             document.getElementById('result-page').classList.add('active');
             showResult();
         } else {
             document.getElementById('pass-error').style.display = "block";
-            document.getElementById('masterPass').classList.add('shake');
-            setTimeout(() => document.getElementById('masterPass').classList.remove('shake'), 400);
-        }
-    }
-
-    function createSparkles(count) {
-        for (let i = 0; i < count; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            p.style.width = (Math.random() * 6 + 10) + 'px'; p.style.height = p.style.width;
-            p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 700, dY = (Math.random() - 0.5) * 700;
-            p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove();
-        }
-    }
-
-    function createMegaSpark(count) {
-        for (let i = 0; i < count; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            p.style.width = (Math.random() * 14 + 5) + 'px'; p.style.height = p.style.width;
-            p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%';
-            document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 1500, dY = (Math.random() - 0.5) * 1500;
-            p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove();
-        }
-    }
-
-    function createCrackers(count) {
-        for (let i = 0; i < count; i++) {
-            const c = document.createElement('div');
-            c.className = 'cracker'; c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            c.style.left = Math.random() * 100 + '%'; c.style.top = Math.random() * 100 + '%';
-            document.body.appendChild(c);
-            const angle = Math.random() * Math.PI * 2; const dist = Math.random() * 1000 + 300;
-            const dX = Math.cos(angle) * dist; const dY = Math.sin(angle) * dist;
-            c.animate([{ transform: `rotate(${angle}rad) translate(0,0) scaleY(1.5)`, opacity: 1 }, { transform: `rotate(${angle}rad) translate(${dX}px, ${dY}px) scaleY(0)`, opacity: 0 }], { duration: 900, easing: 'ease-out' }).onfinish = () => c.remove();
         }
     }
 
@@ -415,42 +337,27 @@
         const giftBtn = document.getElementById('gift-btn');
         if (score === 20) {
             text.innerText = "Perfect Score 20/20! Archana, you're amazing! ❤️";
-            giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Gifts"; giftBtn.onclick = () => {
+            giftBtn.style.display = 'block'; giftBtn.innerText = "Claim Gifts"; 
+            giftBtn.onclick = () => {
                 document.getElementById('result-page').classList.remove('active');
                 document.getElementById('gift-page').classList.add('active');
+                // Optional: Clear memory once she finishes successfully
+                // localStorage.removeItem('bibin_wrong_count');
             };
         } else {
-            text.innerText = `Babbyy, you need 20/20 to see the surprise! Try again!`;
-            giftBtn.style.display = 'block'; giftBtn.innerText = "Restart 🔄"; giftBtn.onclick = () => location.reload();
+            text.innerText = `Babbyy, you need 20/20! You only got ${score}/20 this time.`;
+            giftBtn.style.display = 'block'; giftBtn.innerText = "Restart 🔄"; 
+            giftBtn.onclick = () => { window.location.reload(); }; 
         }
     }
 
-    function openView(id, m) {
-        document.getElementById('gift-selection').style.display = 'none';
-        document.getElementById(id).style.display = 'block';
-        if(id === 'letter-view') typeL();
-        if(m) {
-            music.play();
-            musicCanvas.style.opacity = "1";
-        }
-    }
-
-    function backToGifts() {
-        music.pause(); music.currentTime = 0;
-        musicCanvas.style.opacity = "0";
-        document.getElementById('letter-view').style.display = 'none';
-        document.getElementById('password-view').style.display = 'none';
-        document.getElementById('music-view').style.display = 'none';
-        document.getElementById('gift-selection').style.display = 'block';
-    }
-
-    function typeL() {
-        const t = "My Dearest Archana,\n\nI am so lucky to have you. You make everything better. Happy Valentine's Day! \n\nForever yours,\nBibin ❤️";
-        const el = document.getElementById('typed-letter'); el.innerHTML = "";
-        let i = 0; const int = setInterval(() => {
-            if(i < t.length) { el.innerHTML += t[i] === '\n' ? '<br>' : t[i]; i++; } else clearInterval(int);
-        }, 50);
-    }
+    // Visual Effects functions preserved...
+    function createSparkles(count) { for (let i = 0; i < count; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; p.style.width = '10px'; p.style.height = '10px'; p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p); const dX = (Math.random() - 0.5) * 700, dY = (Math.random() - 0.5) * 700; p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove(); } }
+    function createMegaSpark(count) { for (let i = 0; i < count; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; p.style.width = '15px'; p.style.height = '15px'; p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%'; document.body.appendChild(p); const dX = (Math.random() - 0.5) * 1500, dY = (Math.random() - 0.5) * 1500; p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove(); } }
+    function createCrackers(count) { for (let i = 0; i < count; i++) { const c = document.createElement('div'); c.className = 'cracker'; c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; c.style.left = Math.random() * 100 + '%'; c.style.top = Math.random() * 100 + '%'; document.body.appendChild(c); const angle = Math.random() * Math.PI * 2; const dist = Math.random() * 1000 + 300; const dX = Math.cos(angle) * dist; const dY = Math.sin(angle) * dist; c.animate([{ transform: `rotate(${angle}rad) translate(0,0) scaleY(1.5)`, opacity: 1 }, { transform: `rotate(${angle}rad) translate(${dX}px, ${dY}px) scaleY(0)`, opacity: 0 }], { duration: 900, easing: 'ease-out' }).onfinish = () => c.remove(); } }
+    function openView(id, m) { document.getElementById('gift-selection').style.display = 'none'; document.getElementById(id).style.display = 'block'; if(id === 'letter-view') typeL(); if(m) { music.play(); musicCanvas.style.opacity = "1"; } }
+    function backToGifts() { music.pause(); music.currentTime = 0; musicCanvas.style.opacity = "0"; document.getElementById('letter-view').style.display = 'none'; document.getElementById('password-view').style.display = 'none'; document.getElementById('music-view').style.display = 'none'; document.getElementById('gift-selection').style.display = 'block'; }
+    function typeL() { const t = "My Dearest Archana,\n\nI am so lucky to have you. You make everything better. Happy Valentine's Day! \n\nForever yours,\nBibin ❤️"; const el = document.getElementById('typed-letter'); el.innerHTML = ""; let i = 0; const int = setInterval(() => { if(i < t.length) { el.innerHTML += t[i] === '\n' ? '<br>' : t[i]; i++; } else clearInterval(int); }, 50); }
 </script>
 </body>
 </html>
