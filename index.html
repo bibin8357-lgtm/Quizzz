@@ -95,6 +95,7 @@
         .shake { animation: shake 0.4s ease-in-out; background-color: var(--wrong-red) !important; color: #b91c1c !important; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
 
+        /* Original Sparkle Particle Style */
         .particle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 999; }
         .cracker { position: absolute; width: 4px; height: 18px; border-radius: 2px; pointer-events: none; z-index: 999; }
 
@@ -227,7 +228,7 @@
         if(isCorrect) { 
             score++; 
             btn.style.backgroundColor = "#b9fbc0"; 
-            createSparkles(40); 
+            createSparkles(25); // Restored original count
         } 
         else { btn.classList.add('shake'); }
         setTimeout(() => {
@@ -268,23 +269,15 @@
         }, 5000); 
     }
 
-    // UPDATED: Faster sparkle pop logic
+    // EXACT ORIGINAL SPARKLE LOGIC & SPEED
     function createSparkles(count) {
         for (let i = 0; i < count; i++) {
             const p = document.createElement('div');
-            p.className = 'particle'; 
-            p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            p.style.width = (Math.random() * 8 + 4) + 'px'; 
-            p.style.height = p.style.width;
-            p.style.left = '50%'; p.style.top = '50%'; 
-            document.body.appendChild(p);
-            const dX = (Math.random() - 0.5) * 1000, dY = (Math.random() - 0.5) * 1000;
-            
-            // Animation is now instant (0 to 400ms) with no scale-up delay
-            p.animate([
-                { opacity: 1, transform: 'scale(1.5) translate(0,0)' },
-                { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }
-            ], { duration: 400, easing: 'ease-out' }).onfinish = () => p.remove();
+            p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*4)];
+            p.style.width = '8px'; p.style.height = '8px';
+            p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p);
+            const dX = (Math.random() - 0.5) * 600, dY = (Math.random() - 0.5) * 600;
+            p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove();
         }
     }
 
