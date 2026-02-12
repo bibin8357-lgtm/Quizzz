@@ -216,7 +216,7 @@
     let score = 0; 
     let time = 0;
     let totalWrongCumulative = 0; 
-    let shuffledIDs = []; // Current order of question DIVs
+    let questionSequence = []; 
 
     const colors = ['#ffafcc', '#bde0fe', '#ffc8dd', '#fff', '#ff0054', '#8338ec', '#00f2ff', '#ffea00', '#b9fbc0', '#ff70a6', '#70d6ff', '#fb6f92'];
     const music = document.getElementById('bgMusic');
@@ -227,7 +227,7 @@
     }
     window.addEventListener('resize', resize); resize();
     
-    // Background animation code (Identical to your original)
+    // Original Background Animations logic
     const curveLines = Array.from({length: 60}, () => ({
         yBase: Math.random() * canvas.height, amplitude: Math.random() * 60 + 20,
         frequency: Math.random() * 0.004 + 0.001, speed: Math.random() * 0.015 + 0.005,
@@ -274,23 +274,19 @@
     animate();
 
     function shuffleLogic() {
-        // Collect IDs of Q1-Q19
-        shuffledIDs = [];
-        for (let i = 1; i <= 19; i++) shuffledIDs.push(`q${i}`);
+        questionSequence = [];
+        for (let i = 1; i <= 19; i++) questionSequence.push(`q${i}`);
 
-        // Shuffle the order of those IDs
-        for (let i = shuffledIDs.length - 1; i > 0; i--) {
+        // Shuffle Q1-Q19
+        for (let i = questionSequence.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [shuffledIDs[i], shuffledIDs[j]] = [shuffledIDs[j], shuffledIDs[i]];
+            [questionSequence[i], questionSequence[j]] = [questionSequence[j], questionSequence[i]];
         }
 
-        // Renumber headers so it looks like 1, 2, 3...
-        shuffledIDs.forEach((id, index) => {
+        // Renumber labels and shuffle buttons for each
+        questionSequence.forEach((id, index) => {
             const page = document.getElementById(id);
-            const header = page.querySelector('h2');
-            header.innerText = `Question ${index + 1}`;
-            
-            // Also shuffle buttons for this specific page
+            page.querySelector('h2').innerText = `Question ${index + 1}`;
             const grid = page.querySelector('.options-grid');
             const buttons = Array.from(grid.children);
             for (let j = buttons.length - 1; j > 0; j--) {
@@ -299,17 +295,17 @@
             }
         });
 
-        // Add Q20 always at the end
-        shuffledIDs.push('q20');
+        questionSequence.push('q20');
         const q20NoBtn = document.getElementById('noButton');
         q20NoBtn.style.position = ""; q20NoBtn.style.left = ""; q20NoBtn.style.top = "";
+        q20NoBtn.style.transition = "none"; 
     }
 
     function startQuiz() {
         shuffleLogic();
         currentStepIdx = 0;
         document.getElementById('instruction-page').classList.remove('active');
-        document.getElementById(shuffledIDs[currentStepIdx]).classList.add('active');
+        document.getElementById(questionSequence[currentStepIdx]).classList.add('active');
     }
 
     function next(btn, isCorrect) {
@@ -322,11 +318,26 @@
             totalWrongCumulative++;
         }
         setTimeout(() => {
-            document.getElementById(shuffledIDs[currentStepIdx]).classList.remove('active');
+            document.getElementById(questionSequence[currentStepIdx]).classList.remove('active');
             currentStepIdx++; 
-            const nextID = shuffledIDs[currentStepIdx];
+            const nextID = questionSequence[currentStepIdx];
             if(nextID) document.getElementById(nextID).classList.add('active');
         }, 600);
+    }
+
+    function moveNoButton() {
+        const btn = document.getElementById('noButton');
+        const container = document.querySelector('.container');
+        
+        // Calculate max boundaries minus button size and padding
+        const maxX = container.clientWidth - btn.offsetWidth - 20;
+        const maxY = container.clientHeight - btn.offsetHeight - 20;
+        
+        // Teleport instantly with no delay
+        btn.style.position = "absolute";
+        btn.style.left = (Math.random() * maxX) + "px";
+        btn.style.top = (Math.random() * maxY) + "px";
+        btn.style.backgroundColor = ""; // Reset color immediately if stuck
     }
 
     function finalYes(btn) {
@@ -368,16 +379,6 @@
         startQuiz();
     }
 
-    function moveNoButton() {
-        const btn = document.getElementById('noButton');
-        const grid = document.getElementById('q20-grid');
-        const maxX = grid.clientWidth - btn.offsetWidth;
-        const maxY = grid.clientHeight - btn.offsetHeight;
-        btn.style.position = "absolute";
-        btn.style.left = (Math.random() * maxX) + "px"; 
-        btn.style.top = (Math.random() * maxY) + "px";
-    }
-
     function goToLockPage() {
         document.getElementById('penalty-page').classList.remove('active');
         document.getElementById('lock-page').classList.add('active');
@@ -392,7 +393,7 @@
         }
     }
 
-    // Visual effect functions
+    // Effect Logic
     function createSparkles(count) { for (let i = 0; i < count; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; p.style.width = '10px'; p.style.height = '10px'; p.style.left = '50%'; p.style.top = '50%'; document.body.appendChild(p); const dX = (Math.random() - 0.5) * 700, dY = (Math.random() - 0.5) * 700; p.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 1000).onfinish = () => p.remove(); } }
     function createMegaSpark(count) { for (let i = 0; i < count; i++) { const p = document.createElement('div'); p.className = 'particle'; p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; p.style.width = '15px'; p.style.height = '15px'; p.style.left = Math.random() * 100 + '%'; p.style.top = Math.random() * 100 + '%'; document.body.appendChild(p); const dX = (Math.random() - 0.5) * 1500, dY = (Math.random() - 0.5) * 1500; p.animate([{ opacity: 1, transform: 'scale(1.5)' }, { opacity: 0, transform: `translate(${dX}px, ${dY}px) scale(0)` }], 2000).onfinish = () => p.remove(); } }
     function createCrackers(count) { for (let i = 0; i < count; i++) { const c = document.createElement('div'); c.className = 'cracker'; c.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)]; c.style.left = Math.random() * 100 + '%'; c.style.top = Math.random() * 100 + '%'; document.body.appendChild(c); const angle = Math.random() * Math.PI * 2; const dist = Math.random() * 1000 + 300; const dX = Math.cos(angle) * dist; const dY = Math.sin(angle) * dist; c.animate([{ transform: `rotate(${angle}rad) translate(0,0) scaleY(1.5)`, opacity: 1 }, { transform: `rotate(${angle}rad) translate(${dX}px, ${dY}px) scaleY(0)`, opacity: 0 }], { duration: 900, easing: 'ease-out' }).onfinish = () => c.remove(); } }
